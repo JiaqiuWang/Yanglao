@@ -16,3 +16,4 @@ dict4 = dict.fromkeys(seq, 10)
 print("新的字典为：", dict4)
 
 print("Value :", dict3.items())
+print("Value :", dict3.items())
