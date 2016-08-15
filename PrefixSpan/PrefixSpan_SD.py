@@ -223,6 +223,8 @@ class PrefixSpanSD:
                 print("频繁序列模式：", fs_var.sequence, ", support:", fs_var.support)
         print("输出所有的局部扫描项字典：", part_fplist)
 
+# --------------------------------------------------------------------------------------------------------- #
+
     """获取局部频繁项：递归调用的函数"""
     def scan_fplist(self, dup_cursor, var_start_index, list_part_fp):
         single_doc = dup_cursor.__getitem__(var_start_index - 1)   # 获取开始索引对应的document
