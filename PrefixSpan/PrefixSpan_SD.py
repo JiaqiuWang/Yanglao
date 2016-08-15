@@ -210,7 +210,7 @@ class PrefixSpanSD:
         # 计算相对支持度
         for var_dict in part_fplist.keys():
             # print("{key:", var_dict, ", value:", part_fplist[var_dict], "}")
-            list_fp = sequence.copy()  # 之前的频繁序列
+            list_fp = sequence.copy()  # 之前的频繁序列，队列复制，不要用赋值
             num_var = part_fplist[var_dict] / length_list_pro
             part_fplist[var_dict] = round(num_var, 3)
             # 如果局部一项的相对支持度大于等于min_sup，把他链接到前一个频繁序列模式上
