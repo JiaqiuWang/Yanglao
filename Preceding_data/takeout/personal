@@ -1,0 +1,133 @@
+P1:
+def random_quantity():
+    var_ill_id = ["more", "less", "more", "less", "more", "less", "more", "more"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_deliver_address():
+    var_ill_id = ["Home", "Pension Agency", "Community", "Community",
+                  "Home", "Home", "Pension Agency", "Pension Agency"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_takeout():
+    var_ill_id = ["炒菜", "盖饭", "汤面", "炒面", "炒菜", "炒菜", "炒菜", "盖饭"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["饿了么", "饿了么", "美团外卖", "饿了么", "百度外卖", "饿了么",
+                  "美团外卖"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_pay_service():
+    var_ill_id = ["Alipay", "PayPal", "PayPal", "PayPal", "Alipay", "银联支付"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+r_hour = int(random.randint(6, 12))
+
+----------------------------------------------------------------------------------------------
+
+P2：
+r_hour = int(random.randint(13, 18))
+
+
+
+def random_quantity():
+    var_ill_id = ["less", "less", "more", "less", "less", "less", "less", "more", "less"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_deliver_address():
+    var_ill_id = ["Community", "Pension Agency", "Community", "Community",
+                  "Community", "Community", "Home", "Community"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_takeout():
+    var_ill_id = ["KFC鸡翅", "套餐", "KFC鸡翅", "KFC鸡翅", "KFC鸡翅", "米线", "凉菜", "凉菜", "盖饭"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["肯德基", "肯德基", "肯德基", "肯德基", "百度外卖", "饿了么", "百度外卖",
+                  "口碑外卖", "口碑外卖"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_pay_service():
+    var_ill_id = ["京东钱包", "翼支付", "网易支付", "银联支付", "翼支付", "翼支付", "京东钱包"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+------------------------------------------------------------------------------------------------
+
+P3:
+r_hour = int(random.randint(10, 14))
+
+
+def random_quantity():
+    var_ill_id = ["more", "more", "more", "less", "more", "more", "more", "more", "less"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_deliver_address():
+    var_ill_id = ["Home", "Pension Agency", "Community", "Pension Agency",
+                  "Pension Agency", "Pension Agency", "Home", "Community"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_takeout():
+    var_ill_id = ["烧烤", "烧烤", "炒菜", "麻辣烫", "麻辣烫", "麻辣烫", "盖饭", "盖饭", "盖饭",
+                  "KFC鸡翅", "麻辣烫"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["肯德基", "必胜客", "必胜客", "超级外卖", "百度外卖", "饿了么", "百度外卖",
+                  "口碑外卖", "必胜客", "必胜客"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_pay_service():
+    var_ill_id = ["云闪付", "Credit Card", "百度钱包", "Credit Card", "Credit Card"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

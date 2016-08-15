@@ -1,0 +1,127 @@
+P1:
+def random_type_express():
+    var_ill_id = ["大米", "食用油", "蔬菜", "水果", "鸡蛋", "食用油", "食用油", "鸡蛋",
+                  "鸡蛋", "鸡蛋", "大米"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["快递家", "小区快递", "闪电购", "快递家", "超市快递", "超市快递", "快递家", "快递家"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+def random_pay_service():
+    var_ill_id = ["Alipay", "PayPal", "PayPal", "PayPal", "Alipay", "银联支付"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+def random_quantity():
+    var_ill_id = ["more", "less", "more", "more", "more", "more", "less", "more"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+def get_deliver_address(type_express):
+    if type_express == "蔬菜" or type_express == "水果":
+        deliver_add = "Pension Agency"
+    else:
+        deliver_add = "Home"
+    return deliver_add
+
+
+def get_charge_quantity(quantity):
+    if quantity == "more":
+        charge = "high"
+    else:
+        charge = "low"
+    return charge
+
+----------------------------------------------------------------------------------------
+
+P2:
+def random_quantity():
+    var_ill_id = ["less", "less", "more", "less", "less", "less", "less", "more"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_express():
+    var_ill_id = ["鸡蛋", "食用油", "调料", "大米", "桶装水", "桶装水", "桶装水", "鸡蛋",
+                  "调料", "白面", "白面"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["超市快递", "闪电购", "超市快递", "超市快递", "超市快递", "超市快递",
+                  "超级快递", "超级快递"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_pay_service():
+    var_ill_id = ["京东钱包", "翼支付", "网易支付", "银联支付", "翼支付", "翼支付", "京东钱包"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+def get_deliver_address(type_express):
+    if type_express == "蔬菜" or type_express == "水果" or type_express == "桶装水":
+        deliver_add = "Pension Agency"
+    else:
+        deliver_add = "Home"
+    return deliver_add
+
+---------------------------------------------------------------------------------------------
+
+P3：
+def random_quantity():
+    var_ill_id = ["more", "less", "more", "less", "more", "less", "more", "more"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_express():
+    var_ill_id = ["蔬菜", "蔬菜", "水果", "水果", "桶装水", "水果", "水果", "鸡蛋",
+                  "水果", "白面"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["闪电购", "闪电购", "社区快递", "社区快递", "社区快递", "社区快递",
+                  "超级快递"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_pay_service():
+    var_ill_id = ["云闪付", "Credit Card", "百度钱包", "Credit Card", "Credit Card"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

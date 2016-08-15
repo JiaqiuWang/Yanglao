@@ -1,0 +1,36 @@
+gua_hao = {"_id": x1, "visiting_time": x2, "hospital_id": x3, "hospital_name": x4, "location": x5,
+        "technical_office": x6, "doctor": (主治医师/普通号/住院医师/副教授/正教授/专家), "charge":x7,
+         "from": {"春雨医生App", "微医App", "web挂号"}, "payment": _id}
+
+payment_transaction = {"_id": x1, "payment_id": _id, "from": "alipay/wechat/bank card/POS", transaction_date: x2,
+        "id": 1 , "name": "挂号服务", "charge": x7}
+
+
+id,and name
+{1:挂号服务，2：转账，3：票务，4：EC, 5：家庭缴费}
+
+jiaoche 叫车 = {"_id": , "pPer_id", "预约出发时间 x2当天"， 出发地址：，到达地址：， 车类型：{舒适性、商务型、豪华型}
+，charge:  ,payment:}
+
+peihu 陪护 = {"_id": , "pPer_id", "陪护开始时间"， "陪护时间长度"：，charge:, payment,
+ 陪护类型：{帮助洗浴、帮助清洁卫生、心里慰藉，照料饮食起居}}
+
+GPS位置 地图 =  {"_id": , "pPer_id", "time": "", location : }
+{家，医院，锻炼场所，养老机构}
+
+外卖/快递 = {"_id": , "pPer_id", from:{饿了么，美团外卖，百度外卖，KFC，物流}，time:, food_kind:{货物，大米，炒饭，盖饭，面，披萨}, 配送地址：AD
+charge:, "payment:"
+
+饿了么，快递服务}
+
+咨询服务：{"_id": , "pPer_id", 咨询主题：{饮食，金融，锻炼，金融，实时}，time:}
+
+保险 =
+
+旅游 =
+
+住宿=
+ 飞机，火车
+
+
+预约服务 = {陪护， 帮助洗浴、帮助清洁卫生、心里慰藉、理发、维修，挂号}

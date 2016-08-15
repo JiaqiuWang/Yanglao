@@ -1,0 +1,3 @@
+{'pPer_id': 'p1', '_id': 1, 'fName': '大病统筹'}
+{'pPer_id': 'p2', '_id': 2, 'fName': '医疗保险'}
+{'pPer_id': 'p3', '_id': 3, 'fName': '自费'}

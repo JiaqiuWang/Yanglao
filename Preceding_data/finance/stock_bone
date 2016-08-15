@@ -1,0 +1,44 @@
+P1：
+def random_location():
+    var_ill_id = ["Home", "Community", "Community", "Community", "Community",
+                  "Community", "Community", "Community",
+                  "Pension Agency", "Home", "Home", "Home", "Corporation", "Mall"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_stock():
+    var_ill_id = ["查询", "买入", "卖出", "查询", "查询", "查询", "查询", "查询",
+                  "买入", "买入", "买入", "买入", "买入", "卖出"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["大智慧", "股票财经", "股票分析", "大智慧", "大智慧", "大智慧", "大智慧"
+                  "中山证券", "中山证券"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+-------------------------------------------------------------------------------------------
+
+P2：
+def random_location():
+    var_ill_id = ["Garden", "Garden", "Garden", "Garden", "Pension Agency",
+                  "Pension Agency", "Pension Agency", "Community", "Pension Agency", "Pension Agency"
+                  "Pension Agency", "Pension Agency", "Pension Agency", "Home", "Corporation", "Mall"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_stock():
+    var_ill_id = ["查询", "查询", "查询", "查询", "查询", "查询", "查询", "查询",
+                  "买入", "卖出", "卖出", "卖出", "卖出", "卖出", "买入", "买入", "卖出", "卖出"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["基金投资", "基金投资", "基金投资", "基金投资", "大智慧", "基金投资", "基金投资"
+                  "国家债券", "国家债券", "国家债券", "国家债券", "国家债券", "股票财经"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp

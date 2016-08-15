@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Preceding_data/base_info/用户个人信息.txt" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/Preceding_data/feeprovider/医疗费承担表.txt" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/Preceding_data/help_bath_clean/help_bath_clean.py" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Preceding_data/residence_condition/居住条件.txt" charset="GBK" />
+    <file url="file://E:/python-fp-growth-master/examples/divide_transction.py" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>

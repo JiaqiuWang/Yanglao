@@ -1,0 +1,89 @@
+P1:
+r_hour = int(random.randint(6, 12))
+
+
+def random_from():
+    var_ill_id = ["社区宝", "养老宝", "爱家养老", "web_yang_lao", "社区宝"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_pay_service():
+    # var_ill_id = ["Alipay", "Wechat", "Credit Card",  "PayPal"]
+    var_ill_id = ["Alipay", "PayPal", "PayPal", "PayPal", "Alipay", "银联支付"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+def get_location(from_sa):
+    # 获取集合
+    location = "Home"
+    if from_sa == "社区宝":
+        location = "Community"
+    if from_sa == "养老宝" or from_sa == "web_yang_lao":
+        location = "Pension Agency"
+    return location
+-----------------------------------------------------------------------------------
+
+p2:
+r_hour = int(random.randint(13, 17))
+
+def random_from():
+    var_ill_id = ["老人助洁", "百善网", "老人助洁", "老人助洁", "养老清洁"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_pay_service():
+    # var_ill_id = ["Alipay", "Wechat", "Credit Card",  "PayPal"]
+    var_ill_id = ["京东钱包", "翼支付", "网易支付", "银联支付", "翼支付", "翼支付", "京东钱包"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+def get_location(from_sa):
+    # 获取集合
+    location = "Home"
+    if from_sa == "百善网":
+        location = "Community"
+    if from_sa == "老人助洁":
+        location = "Pension Agency"
+    return location
+
+------------------------------------------------------------------------------------
+
+P3：
+r_hour = int(random.randint(18, 21))
+
+ef random_from():
+    var_ill_id = ["老人助洁", "养老清洁", "老人助洁", "老人助洁", "养老清洁", "web_yang_lao", "web_yang_lao"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_pay_service():
+    var_ill_id = ["云闪付", "Credit Card", "百度钱包", "Credit Card", "Credit Card"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+def get_location(from_sa):
+    # 获取集合
+    location = "Home"
+    if from_sa == "老人助洁":
+        location = "Community"
+    if from_sa == "养老清洁" or from_sa == "web_yang_lao":
+        location = "Pension Agency"
+    return location
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

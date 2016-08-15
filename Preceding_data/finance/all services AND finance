@@ -1,0 +1,81 @@
+finance: "东方财富网", "小米金融", "随手记", "记账理财", "紫马财行", "银行应用", "信用卡管理", "借贷宝", "保险",
+stock_bone: "大智慧", "股票财经", "中山证券", "基金投资","国家债券"
+lottery: "全民彩票", "福利彩票", "体育彩票", "必中彩票", "网易彩票", "双色球"
+
+----------------------------------------------------------------------------------------------------------
+
+P1:
+
+def random_location():
+    var_ill_id = ["Home", "Community", "Community", "Community", "Community",
+                  "Community", "Community", "Community",
+                  "Pension Agency", "Home", "Home", "Home", "Corporation", "Mall"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_fiance():
+    var_ill_id = ["expense", "expense", "expense", "expense", "expense", "expense", "expense", "expense",
+                  "expense", "income", "expense", "income", "expense"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["银行应用", "银行应用", "随手记", "记账理财", "信用卡管家", "信用卡管家", "信用卡管家", "借贷宝"
+                  "信用卡管理", "随手记", "随手记", "信用卡管家"]
+    var_temp = random.choice(var_ill_id)
+
+-----------------------------------------------------------------------------------------------------------------
+
+P2：
+
+def random_location():
+    var_ill_id = ["Garden", "Garden", "Garden", "Garden", "Pension Agency",
+                  "Pension Agency", "Pension Agency", "Community", "Pension Agency", "Pension Agency"
+                  "Pension Agency", "Pension Agency", "Pension Agency", "Home", "Corporation", "Mall"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_fiance():
+    var_ill_id = ["expense", "expense", "expense", "expense", "expense", "expense", "expense", "expense",
+                  "expense", "income", "expense", "income", "expense", "expense"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["保险", "保险", "随手记", "保险", "保险", "信用卡管家", "信用卡管家", "借贷宝"
+                  "信用卡管家", "紫马财行", "随手记", "信用卡管家", "借贷宝", "紫马财行", "银行应用",
+                  "保险", "随手记"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+------------------------------------------------------------------------------------------------------------
+P3：
+def random_location():
+    var_ill_id = ["Mall", "Mall", "Mall", "Home", "Mall", "Garden", "Garden", "Mall",
+                  "Pension Agency", "Mall", "Community", "Home", "Mall", "Mall",
+                  "Corporation", "Corporation", "Corporation", "Home", "Corporation", "Mall"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_fiance():
+    var_ill_id = ["expense", "expense", "expense", "expense", "expense", "expense", "expense", "expense",
+                  "expense", "income", "expense", "income", "expense", "expense", "income", "income"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["信用卡管家", "信用卡管家", "信用卡管家", "信用卡管家", "保险", "信用卡管家", "信用卡管家", "借贷宝"
+                  "银行应用", "银行应用", "随手记", "保险", "借贷宝", "紫马财行", "银行应用", "紫马财行", "紫马财行"
+                  "保险", "随手记"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+
+
+

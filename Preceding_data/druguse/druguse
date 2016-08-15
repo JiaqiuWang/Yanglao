@@ -1,0 +1,6 @@
+["Dg1", "Dg3", "Dg5", "Dg7", "Dg5", "Dg3"] p1
+"Psychotropic": "yes"
+
+p2: var_ill_id = ["Dg2", "Dg4", "Dg6", "Dg6", "Dg6", "Dg8"]
+
+p3: ["Dg2", "Dg1", "Dg5", "Dg6", "Dg7", "Dg8", "Dg8"]

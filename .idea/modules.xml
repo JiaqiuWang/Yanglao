@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/Yanglao.iml" filepath="$PROJECT_DIR$/.idea/Yanglao.iml" />
+      <module fileurl="file://E:/prefixspan/.idea/prefixspan.iml" filepath="E:/prefixspan/.idea/prefixspan.iml" />
+      <module fileurl="file://E:/python-fp-growth-master/.idea/python-fp-growth-master.iml" filepath="E:/python-fp-growth-master/.idea/python-fp-growth-master.iml" />
+    </modules>
+  </component>
+</project>

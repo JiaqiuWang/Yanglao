@@ -1,0 +1,70 @@
+all services: {房产法律咨询, 财产法律咨询, 婚姻法律咨询，心理咨询, 好大夫在线, 丁香医生, 养生咨询, 问药
+ 健康咨询，锻炼咨询，旅游咨询}
+
+
+P1:
+def random_from():
+    var_ill_id = ["房产法律咨询", "财产法律咨询", "好大夫在线", "养生咨询", "房产法律咨询", "房产法律咨询",
+                  "房产法律咨询", "房产法律咨询", "房产法律咨询", "好大夫在线", "房产法律咨询", "房产法律咨询", "房产法律咨询",
+                  "问药", "好大夫在线", "好大夫在线"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_location():
+    var_ill_id = ["Home", "Pension Agency", "Community", "Community",
+                  "Home", "Home", "Pension Agency", "Pension Agency"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+ ------------------------------------------------------------------------------------------------------
+
+p2:
+
+def random_from():
+    var_ill_id = ["丁香医生", "丁香医生", "丁香医生", "养生咨询", "养生咨询", "养生咨询",
+                  "锻炼咨询", "锻炼咨询", "锻炼咨询", "好大夫在线", "房产法律咨询", "锻炼咨询", "锻炼咨询",
+                  "问药", "好大夫在线", "锻炼咨询", "心理咨询", "问药"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_location():
+    var_ill_id = ["Community", "Pension Agency", "Community", "Community",
+                  "Community", "Community", "Home", "Community"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+----------------------------------------------------------------------------------------------------
+
+P3:
+def random_from():
+    var_ill_id = ["财产法律咨询", "财产法律咨询", "财产法律咨询", "健康咨询", "健康咨询", "健康咨询",
+                  "健康咨询", "锻炼咨询", "健康咨询", "健康咨询", "财产法律咨询", "财产法律咨询", "财产法律咨询",
+                  "问药", "财产法律咨询", "财产法律咨询", "心理咨询", "财产法律咨询"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_location():
+    var_ill_id = ["Home", "Pension Agency", "Community", "Pension Agency",
+                  "Pension Agency", "Pension Agency", "Home", "Community"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

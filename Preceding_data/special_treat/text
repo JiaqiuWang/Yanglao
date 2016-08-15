@@ -1,0 +1,10 @@
+text1 = {"_id": var, "pPer_id": "p1", "treat_plan_id": x1, "drug_use_name": drug_name,
+                    "Psychotropic": drug_psychotropic, "DoctorOrder_id": drug_order,
+                    "DoctorOrder_name": drug_order_name,
+                    "dDrugAllergy_id": da_id,
+                    "dDrugAllergy_name": da_name,
+                    "check_time": var_time.strftime(":%Y-%m-%d  %H:%M:%S")}
+            print("return_text: ", text)
+
+
+text2 = {"_id": }

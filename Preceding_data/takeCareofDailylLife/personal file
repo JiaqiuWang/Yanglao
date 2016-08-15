@@ -1,0 +1,55 @@
+
+
+p1: def random_pay_service():
+    # var_ill_id = ["Alipay", "Wechat", "Credit Card",  "PayPal"]
+    var_ill_id = ["Alipay", "PayPal", "PayPal", "PayPal", "Alipay", "银联支付"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+p1: def random_duration():
+    var_ill_id = ["1天", "2天", "3天", "4天", "5天", "1周", "2周", "2天"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+p1: def random_from():
+    var_ill_id = ["百善网", "智慧养老", "web_yang_lao"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+------------------------------------------------------------------------------------------------------------
+
+P2： def random_duration():
+    var_ill_id = ["1周", "2周", "1月", "2月", "1周", "2周", "1周"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["养老宝", "爱家养老", "web_yang_lao", "养老宝", "养老宝", "掌上养老"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_pay_service():
+    # var_ill_id = ["Alipay", "Wechat", "Credit Card",  "PayPal"]
+    var_ill_id = ["京东钱包", "翼支付", "网易支付", "银联支付", "翼支付", "翼支付", "京东钱包"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+------------------------------------------------------------------------------------------------------------
+
+P3：def random_duration():
+    var_ill_id = ["1天", "2周", "1月", "3天", "1月", "1月"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["百善网", "百善网", "养老宝", "爱家养老", "web_yang_lao", "掌上养老"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_pay_service():
+    # var_ill_id = ["Alipay", "Wechat", "Credit Card",  "PayPal"]
+    var_ill_id = ["云闪付", "Credit Card", "百度钱包", "Credit Card", "Credit Card"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp

@@ -1,0 +1,127 @@
+P1:
+
+def random_location():
+    var_ill_id = ["Home", "Community", "Community", "Community", "Community",
+                  "Community", "Community", "Community",
+                  "Pension Agency", "Home", "Home", "Home", "Corporation", "Mall"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_quantity():
+    var_ill_id = ["multiple", "multiple", "multiple", "multiple", "single",
+                  "multiple", "multiple", "medium", "multiple"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_lottery():
+    var_ill_id = ["查询中奖信息", "购买彩票", "领取中奖金额", "出售彩票", "查询中奖信息", "查询中奖信息", "查询中奖信息",
+                  "查询中奖信息", "购买彩票", "购买彩票", "购买彩票", "购买彩票", "购买彩票", "购买彩票", "领取中奖金额"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["福利彩票", "福利彩票", "福利彩票", "必中彩票", "双色球", "福利彩票", "双色球"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+-----------------------------------------------------------------------------------------------------------------------
+
+p2:
+
+def get_balance(type_lottery):
+    if type_lottery == "查询中奖信息":
+        balance_my = "unchanged"
+    elif type_lottery == "购买彩票":
+        balance_my = "expense"
+    elif type_lottery == "出售彩票" or type_lottery == "领取中奖金额":
+        balance_my = "income"
+    else:
+        balance_my = "unchanged"
+    return balance_my
+
+
+def random_location():
+    var_ill_id = ["Pension Agency", "Pension Agency", "Pension Agency", "Pension Agency", "Community",
+                  "Community", "Pension Agency", "Pension Agency",
+                  "Mall", "Home", "Home", "Pension Agency", "Corporation", "Mall"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_quantity():
+    var_ill_id = ["single", "single", "single", "multiple", "single",
+                  "single", "single", "medium", "single", "single"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_lottery():
+    var_ill_id = ["购买彩票", "购买彩票", "购买彩票", "出售彩票", "查询中奖信息", "查询中奖信息", "购买彩票",
+                  "购买彩票", "购买彩票", "购买彩票", "购买彩票", "购买彩票", "购买彩票", "出售彩票", "领取中奖金额"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["体育彩票", "体育彩票", "体育彩票", "体育彩票", "全民彩票", "福利彩票", "全民彩票",
+                  "必中彩票", "必中彩票"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+-------------------------------------------------------------------------------------------------------------
+
+P3:
+
+def random_location():
+    var_ill_id = ["Home", "Home", "Home", "Home", "Community",
+                  "Community", "Home", "Home", "Home",
+                  "Home", "Home", "Home", "Pension Agency", "Corporation", "Mall"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_quantity():
+    var_ill_id = ["medium", "medium", "medium", "multiple", "medium",
+                  "medium", "medium", "medium", "single", "medium"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_type_lottery():
+    var_ill_id = ["查询中奖信息", "查询中奖信息", "购买彩票", "出售彩票", "查询中奖信息", "出售彩票", "出售彩票",
+                  "出售彩票", "出售彩票", "出售彩票", "出售彩票", "购买彩票", "购买彩票", "出售彩票", "领取中奖金额",
+                  "领取中奖金额"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_from():
+    var_ill_id = ["网易彩票", "网易彩票", "网易彩票", "网易彩票", "全民彩票", "福利彩票", "双色球",
+                  "必中彩票", "网易彩票"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

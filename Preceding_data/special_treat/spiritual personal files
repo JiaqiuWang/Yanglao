@@ -1,0 +1,71 @@
+P1:
+r_hour = int(random.randint(13, 17))
+
+def random_from():
+    var_ill_id = ["精神科专家", "老人聊天", "广播服务(web)", "广播服务(web)", "广播服务(web)"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_pay_service():
+    var_ill_id = ["Alipay", "PayPal", "PayPal", "PayPal", "Alipay", "银联支付"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+def get_location(from_sa):
+    # 获取集合
+    location = "Home"
+    if from_sa == "精神科专家":
+        location = "Community"
+    if from_sa == "老人聊天":
+        location = "Pension Agency"
+    return location
+
+def get_charge_spiritual(from_sa):
+    charge = "medium"
+    if from_sa == "精神科专家":
+        charge = "high"
+    if from_sa == "广播服务(web)":
+        charge = "low"
+    return charge
+
+---------------------------------------------------------------------------------------------------
+
+P2：
+ r_hour = int(random.randint(6, 12))
+
+ def random_from():
+    var_ill_id = ["精神科专家", "老人聊天", "元气医养", "元气医养", "随时亲", "随时亲", "元气医养"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+def random_pay_service():
+    var_ill_id = ["京东钱包", "翼支付", "网易支付", "银联支付", "翼支付", "翼支付", "京东钱包"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+def get_charge_spiritual(from_sa):
+    charge = "medium"
+    if from_sa == "精神科专家":
+        charge = "high"
+    if from_sa == "元气医养":
+        charge = "low"
+    return charge
+
+----------------------------------------------------------------------------------------------------
+
+P3:
+ r_hour = int(random.randint(10, 13))
+
+def random_from():
+    var_ill_id = ["老人聊天", "广播服务(web)", "广播服务(web)", "老人聊天", "老人聊天", "老人聊天"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+
+def random_pay_service():
+    var_ill_id = ["云闪付", "Credit Card", "百度钱包", "Credit Card", "Credit Card"]
+    var_temp = random.choice(var_ill_id)
+    return var_temp
+
+

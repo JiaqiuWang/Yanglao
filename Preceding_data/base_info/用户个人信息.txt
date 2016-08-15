@@ -1,0 +1,27 @@
+"_id": 3, "pPer_id": "p3", "pName": "赵思雨",
+                "pID_Card": "963465418307541806", "pSocialSecurity_Card": "card3",
+                "pSex": "1", "pNational": "蒙古族", "pHometown": "北京",
+                "pDomicile": "深圳", "pReligion": "佛教", "pAge": 70,
+                "pBrithday": "1952-7-10", "pEducation": "初中", "pCareer": "军队",
+                "pMarriage": "离异", "pAddress": "北京王府井大街", "pResidence": "干净，简洁",
+                "pPhone": "18636363000", "pAgentPer": "海涛", "pAgentComp": "北京故乡",
+                "pAgentAddr": "天使团", "pAgentPhone": 16812345693, "pFeeProvider": "f5",
+                "pMoneyFrom": "工资"
+
+
+"_id": 1, "pPer_id": "p1", "pName": "马丽", "pID_Card": " 230402198307184806",
+               "pSocialSecurity_Card": "card1", "pSex": "2", "pNational": "彝族", "pHometown": "广西，桂林市，面话街",
+               "pDomicile": "山东，威海市", "pReligion": "天主教", "pAge": 65, "pBrithday": "1958-10-3",
+               "pEducation": "高中", "pCareer": "小学老师", "pMarriage": "已婚", "pAddress": "威海市天河区",
+               "pResidence": "干净，简洁", "pPhone": "13536363654", "pAgentPer": "马强",
+               "pAgentComp": "威海市劳动局", "pAgentAddr": "士的宁", "pAgentPhone": 13812345693,
+               "pFeeProvider": "f1", "pMoneyFrom": "工资"
+
+
+{"_id": 2, "pPer_id": "p2", "pName": "赵刚", "pID_Card": " 9506543983071023657",
+               "pSocialSecurity_Card": "card1", "pSex": "1", "pNational": "蒙古族", "pHometown": "辽宁，锦州市，大话街",
+               "pDomicile": "北京", "pReligion": "天主教", "pAge": 67, "pBrithday": "1956-3-7",
+               "pEducation": "大专", "pCareer": "公司职员", "pMarriage": "已婚", "pAddress": "锦州市天河区",
+               "pResidence": "干净，简洁", "pPhone": "13536363654", "pAgentPer": "王美丽",
+               "pAgentComp": "北京市劳动局", "pAgentAddr": "矮冬瓜", "pAgentPhone": 1381236593,
+               "pFeeProvider": "f1", "pMoneyFrom": "工资"}
