@@ -112,17 +112,16 @@ class PrefixSpanSD:
     def decide_continue_termination(self, var_cursor):
         while self.fp_candidate is not None:
             self.find_prefix_subset(var_cursor)
-            self.fp_candidate.clear()
-        print("停止扫描！")
+        print("算法终止！")
 
 # --------------------------------------------------------------------------------------------------------- #
 
     """第二部分：划分并且挖掘每个频繁序列的前缀子集，并且形成投影数据库，然后挖掘局部频繁项"""
     def find_prefix_subset(self, cursor_project):
         # 循环得到每个频繁的序列
-        if self.fp_list is not None:
+        if self.fp_candidate is not None:
             print("频繁的序列模式：")
-            for i in self.fp_list:
+            for i in self.fp_candidate:
                 print("sequence: ", i.sequence, ", sup:", i.support, ", type(i):", type(i))
                 # 形成前缀数据库，# 两种选择，如果数据量大于阈值，放到实际的数据库里面形成物理存储；+
                 # 如果数据量小于阈值，则放入内存里面
@@ -143,7 +142,7 @@ class PrefixSpanSD:
         # print("虚拟投影方法！将start_id, end_id保存到dict中，然后用List保存每个dict")
         count_cp = cursor_project.count()  # 所有documents的数量
         cursor_project.rewind()
-        str_sequence = sequence[-1]
+        str_sequence = sequence[-1]  # 获取序列中的最后一个service_name
         print("需要形成投影的前缀：", str_sequence)
         list_project = []  # 用于存放投影序列开始索引位置的队列，为每一个前缀service_name
         next_trans_no = 1
@@ -199,7 +198,7 @@ class PrefixSpanSD:
         print(sequence, support, cursor_project)
 
     # 第二小部分：对投影数据扫描一次，找到他的局部频繁项。sequence：前面的频繁序列，list_project所投影的数据库，
-    # dup_cursor: 之前查询的所有游标集合
+    # dup_cursor: 之前查询的所有游标集合， sequence: ['支付服务']
     def scan_fplist_for_sequences(self, sequence, list_project, dup_cursor, support):
         if dup_cursor is None or sequence is None or list_project is None:
             print("dup_cursor is None: ", dup_cursor)
@@ -211,21 +210,20 @@ class PrefixSpanSD:
         # 计算相对支持度
         for var_dict in part_fplist.keys():
             # print("{key:", var_dict, ", value:", part_fplist[var_dict], "}")
+            list_fp = sequence.copy()  # 之前的频繁序列
             num_var = part_fplist[var_dict] / length_list_pro
             part_fplist[var_dict] = round(num_var, 3)
             # 如果局部一项的相对支持度大于等于min_sup，把他链接到前一个频繁序列模式上
             if part_fplist[var_dict] >= self.min_sup:
-                list_fp = sequence  # 之前的频繁序列
                 list_fp.extend([var_dict])
                 print("list_fplist:", list_fp)
                 fs_var = FrequentSequences.SequencesFP(list_fp, min(support, part_fplist[var_dict]))
                 self.fp_list.append(fs_var)  # 全局频繁序列模式
-                self.fp_candidate.append(fs_var)  #
+                self.fp_candidate.append(fs_var)  # 用于判定下一次是否有候选的频繁序列模式
                 print("频繁序列模式：", fs_var.sequence, ", support:", fs_var.support)
-                list_fp.clear()
         print("输出所有的局部扫描项字典：", part_fplist)
 
-    """递归调用的函数"""
+    """获取局部频繁项：递归调用的函数"""
     def scan_fplist(self, dup_cursor, var_start_index, list_part_fp):
         single_doc = dup_cursor.__getitem__(var_start_index - 1)   # 获取开始索引对应的document
         current_trans_no = single_doc.get("trans_no")   # 获取对应的trans_no
@@ -272,9 +270,9 @@ class PrefixSpanSD:
 
 def main_operation():
     """Part1: 设置参数"""
-    min_sup = 0.15
-    uid = "p1"
-    db_name = "yanglao"
+    min_sup = 0.15  # 最小支持度阈值
+    uid = "p1"  # 用户标识
+    db_name = "yanglao"  # 数据库名称
     collection_read = "fp_trans_"+uid  # 待第一次扫描的序列数据库
     # 滑动时间窗口参数
     # time_windows = 0
