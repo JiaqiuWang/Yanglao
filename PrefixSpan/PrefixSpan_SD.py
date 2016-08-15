@@ -24,6 +24,8 @@ class PrefixSpanSD:
     final_trans_no = 0
     # 每个人的全部记录数量
     total_counts = 0
+    # 将前缀序列和对应的投影索引列表，存放字典中
+    dict_prefix_index = {}
 
     """构造函数"""
     def __init__(self, min_sup, uid, db_name, collection_read, project_records):
@@ -143,7 +145,7 @@ class PrefixSpanSD:
         count_cp = cursor_project.count()  # 所有documents的数量
         cursor_project.rewind()
         str_sequence = sequence[-1]  # 获取序列中的最后一个service_name
-        print("需要形成投影的前缀：", str_sequence)
+        print("需要形成投影的前缀：", str_sequence, "type(前缀):", type(str_sequence))
         list_project = []  # 用于存放投影序列开始索引位置的队列，为每一个前缀service_name
         next_trans_no = 1
         for var_doc in cursor_project:
@@ -185,9 +187,13 @@ class PrefixSpanSD:
                         continue
                 next_trans_no += 1
         print("产生的伪投影索引队列:", list_project)
+        # 将前缀序列和对应的投影索引列表，存放字典中
+        if str_sequence not in self.dict_prefix_index:
+            self.dict_prefix_index.setdefault(str_sequence, list_project)
+
+
         # 第二小部分：对投影数据扫描一次，找到他的局部频繁项
         self.scan_fplist_for_sequences(sequence, list_project, dup_cursor, support)
-        del list_project
 
     """形成前缀数据库，物理数据库投影方法"""
     @classmethod
@@ -216,7 +222,7 @@ class PrefixSpanSD:
             # 如果局部一项的相对支持度大于等于min_sup，把他链接到前一个频繁序列模式上
             if part_fplist[var_dict] >= self.min_sup:
                 list_fp.extend([var_dict])
-                print("list_fplist:", list_fp)
+                # print("list_fplist:", list_fp)
                 fs_var = FrequentSequences.SequencesFP(list_fp, min(support, part_fplist[var_dict]))
                 self.fp_list.append(fs_var)  # 全局频繁序列模式
                 self.fp_candidate.append(fs_var)  # 用于判定下一次是否有候选的频繁序列模式
