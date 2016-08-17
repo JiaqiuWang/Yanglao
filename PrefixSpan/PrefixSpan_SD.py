@@ -113,17 +113,21 @@ class PrefixSpanSD:
     """
     def decide_continue_termination(self, var_cursor):
         while self.fp_candidate is not None:
-            self.find_prefix_subset(var_cursor)
+            print("fp_candidate is not None!")
+            fp_candidate_duplicate = self.fp_candidate.copy()  # 复制上一步新生成的频繁序列模式
+            self.fp_candidate.clear()   # 先清空，再看是否后续扫描具有新添加的频繁序列模式
+            self.find_prefix_subset(fp_candidate_duplicate, var_cursor)
+            fp_candidate_duplicate.clear()  # 等找完新的一轮频繁序列模式后，再清空复制的副本
         print("算法终止！")
 
 # --------------------------------------------------------------------------------------------------------- #
 
     """第二部分：划分并且挖掘每个频繁序列的前缀子集，并且形成投影数据库，然后挖掘局部频繁项"""
-    def find_prefix_subset(self, cursor_project):
+    def find_prefix_subset(self, fp_candidate_duplicate, cursor_project):
         # 循环得到每个频繁的序列
-        if self.fp_candidate is not None:
-            print("频繁的序列模式：")
-            for i in self.fp_candidate:
+        if fp_candidate_duplicate is not None:
+            print("频繁的序列模式-：")
+            for i in fp_candidate_duplicate:
                 print("sequence: ", i.sequence, ", sup:", i.support, ", type(i):", type(i))
                 # 形成前缀数据库，# 两种选择，如果数据量大于阈值，放到实际的数据库里面形成物理存储；+
                 # 如果数据量小于阈值，则放入内存里面
@@ -140,12 +144,50 @@ class PrefixSpanSD:
         if cursor_project is None:
             print("cursor_project is None! Return!")
             return
+        list_project = []
+        if len(sequence) == 1:
+            list_project = self.get_prefix_project_index_when_len_sequence_is_one(cursor_project, sequence)
+        elif len(sequence) > 1:
+            list_project = self.get_prefix_project_index_when_len_sequence_more(cursor_project, sequence)
+        if list_project is None:
+            print("没有获取到投影的索引序列(list_project = None)")
+        else:
+            print("需要形成投影的前缀(sequence)：", sequence)
+            print("产生的伪投影索引队列(list_project):", list_project)
+            # 将前缀序列和对应的投影索引列表，存放字典中
+            if tuple(sequence) not in self.dict_prefix_index:
+                self.dict_prefix_index.setdefault(tuple(sequence), list_project)
+            # 第二小部分：对投影数据扫描一次，找到他的局部频繁项
+            dup_cursor = cursor_project.clone()
+            self.scan_fplist_for_sequences(sequence, list_project, dup_cursor, support)
+
+    """获取前缀索引的队列  返回值是 前缀索引队列"""
+    def get_prefix_project_index_when_len_sequence_more(self, cursor_project, sequence):
+        # 第一种情况，放到内存里面，形成虚拟投影
+        # 第一步：获取到前一个序列中的索引序列，存储后缀索引的字典数据结构为：key: (支付服务，慰藉服务)tuple，value:[10,2]list
+        if tuple(sequence) in self.dict_prefix_index:
+            print("频繁模式：", tuple(sequence), "对应的待查找的后缀索引为：", self.dict_prefix_index[tuple(sequence)])
+        # 第二部：查找该序列模式新的后缀索引，这里只处理一个序列模式的查找
+
+
+
+
+        count_cp = cursor_project.count()  # 所有documents的数量
+        cursor_project.rewind()
+        str_sequence = sequence[-1]  # 获取序列中的最后一个service_name
+        list_project = []  # 用于存放投影序列开始索引位置的队列，为每一个前缀service_name
+
+        return list_project
+
+
+
+    """获取前缀索引的队列  返回值是 前缀索引队列"""
+    def get_prefix_project_index_when_len_sequence_is_one(self, cursor_project, sequence):
         # 第一种情况，放到内存里面，形成虚拟投影
         # print("虚拟投影方法！将start_id, end_id保存到dict中，然后用List保存每个dict")
         count_cp = cursor_project.count()  # 所有documents的数量
         cursor_project.rewind()
         str_sequence = sequence[-1]  # 获取序列中的最后一个service_name
-        print("需要形成投影的前缀：", str_sequence, "type(前缀):", type(str_sequence))
         list_project = []  # 用于存放投影序列开始索引位置的队列，为每一个前缀service_name
         next_trans_no = 1
         for var_doc in cursor_project:
@@ -158,7 +200,7 @@ class PrefixSpanSD:
             if current_trans_no == next_trans_no:
                 if str_sequence == temp_ser_name:
                     # 如果找到一个前缀，那么判断下一个_id的trans_no是不是在一个trans_no里面
-                    if current_id == count_cp:   # 如果是最后一个doc，剪枝不用找了
+                    if current_id == count_cp:  # 如果是最后一个doc，剪枝不用找了
                         break
                     flag_next_trans_no = self.db_getitem(current_id, dup_cursor)
                     # print("Same: flag_next_trans:", flag_next_trans_no, ",current_tran:", current_trans_no,
@@ -186,14 +228,7 @@ class PrefixSpanSD:
                         next_trans_no = current_trans_no + 1
                         continue
                 next_trans_no += 1
-        print("产生的伪投影索引队列:", list_project)
-        # 将前缀序列和对应的投影索引列表，存放字典中
-        if str_sequence not in self.dict_prefix_index:
-            self.dict_prefix_index.setdefault(str_sequence, list_project)
-
-
-        # 第二小部分：对投影数据扫描一次，找到他的局部频繁项
-        self.scan_fplist_for_sequences(sequence, list_project, dup_cursor, support)
+        return list_project
 
     """形成前缀数据库，物理数据库投影方法"""
     @classmethod
