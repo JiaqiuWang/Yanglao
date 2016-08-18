@@ -165,9 +165,17 @@ class PrefixSpanSD:
     def get_prefix_project_index_when_len_sequence_more(self, cursor_project, sequence):
         # 第一种情况，放到内存里面，形成虚拟投影
         # 第一步：获取到前一个序列中的索引序列，存储后缀索引的字典数据结构为：key: (支付服务，慰藉服务)tuple，value:[10,2]list
+        print("dict_prefix_index:", self.dict_prefix_index)
         if tuple(sequence) in self.dict_prefix_index:
             print("频繁模式：", tuple(sequence), "对应的待查找的后缀索引为：", self.dict_prefix_index[tuple(sequence)])
-        # 第二部：查找该序列模式新的后缀索引，这里只处理一个序列模式的查找
+        # 第二部：查找该序列模式新的后缀索引，这里只处理一个序列模式的查找。 sequence：['支付服务', '慰藉服务']
+        self.get_postfix_project_index_when_len_sequence_more(cursor_project, sequence,
+                                                              self.dict_prefix_index[tuple(sequence)])
+
+
+
+
+
 
 
 
@@ -178,6 +186,34 @@ class PrefixSpanSD:
         list_project = []  # 用于存放投影序列开始索引位置的队列，为每一个前缀service_name
 
         return list_project
+
+    """获取前缀索引的队列  返回值是 前缀索引队列 sequence：['支付服务', '慰藉服务']
+    before_post_list: 支付服务的后缀List
+    """
+    def get_postfix_project_index_when_len_sequence_more(self, cursor_project, sequence, before_postfix_list):
+        cursor_project.rewind()
+        # 第一步：取出sequence序列中最后一个元素
+        str_last_ele = sequence[-1]
+        # 定义存放suffix的队列
+        suffix_index = []
+        # 第二部：查询每个before_postfix_list中index对应trans_no有无str_last_ele
+        for var_start_index in before_postfix_list:
+            single_doc = cursor_project.__getitem__(var_start_index - 1)  # 获取开始索引对应的document
+            current_trans_no = single_doc.get("trans_no")  # 获取对应的trans_no
+            # 获取开始索引对应的序列集合, _id生序排列
+            collection = self.db.get_collection(self.collection_read)
+            var_cursor = collection.find({"trans_no": current_trans_no, "service_name": str_last_ele,
+                                          "_id": {"$gte": var_start_index}}).sort({"_id": 1})
+            count_var_cursor = var_cursor.count()
+            if count_var_cursor == 0:
+                continue
+            for part_doc in var_cursor:
+                if part_doc.get("service_name") == str_last_ele:
+                    suffix_id = part_doc.get("_id") + 1
+                    if current_trans_no == cursor_project.__getitem__(suffix_id - 1).get("trans_no"):
+                        suffix_index.append(suffix_id)
+
+
 
 
 
@@ -230,6 +266,8 @@ class PrefixSpanSD:
                 next_trans_no += 1
         return list_project
 
+#-----------------------------------------------------------------------------------------------------------------#
+
     """形成前缀数据库，物理数据库投影方法"""
     @classmethod
     def create_prefix_subsets_physical_project(cls, sequence, support, cursor_project):
@@ -237,6 +275,8 @@ class PrefixSpanSD:
         # 第二种情况，放到物理数据库里面
         print("物理数据库投影方法，")
         print(sequence, support, cursor_project)
+
+#-----------------------------------------------------------------------------------------------------------------#
 
     # 第二小部分：对投影数据扫描一次，找到他的局部频繁项。sequence：前面的频繁序列，list_project所投影的数据库，
     # dup_cursor: 之前查询的所有游标集合， sequence: ['支付服务']
