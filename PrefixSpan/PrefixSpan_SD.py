@@ -155,8 +155,7 @@ class PrefixSpanSD:
             print("需要形成投影的前缀(sequence)：", sequence)
             print("产生的伪投影索引队列(list_project):", list_project)
             # 将前缀序列和对应的投影索引列表，存放字典中
-            if tuple(sequence) not in self.dict_prefix_index:
-                self.dict_prefix_index.setdefault(tuple(sequence), list_project)
+            self.dict_prefix_index.setdefault(tuple(sequence), list_project)
             # 第二小部分：对投影数据扫描一次，找到他的局部频繁项
             dup_cursor = cursor_project.clone()
             self.scan_fplist_for_sequences(sequence, list_project, dup_cursor, support)
@@ -166,25 +165,17 @@ class PrefixSpanSD:
         # 第一种情况，放到内存里面，形成虚拟投影
         # 第一步：获取到前一个序列中的索引序列，存储后缀索引的字典数据结构为：key: (支付服务，慰藉服务)tuple，value:[10,2]list
         print("dict_prefix_index:", self.dict_prefix_index)
-        if tuple(sequence) in self.dict_prefix_index:
-            print("频繁模式：", tuple(sequence), "对应的待查找的后缀索引为：", self.dict_prefix_index[tuple(sequence)])
+        # 做一个slice切片，切片范围是从队列第一个元素一直到队列倒数第一个元素(不包括倒数第一个)
+        my_slice = slice(0, -1)
+        pre_sequence = sequence[my_slice]
+        # print("pre_sequence:", pre_sequence)
+        if tuple(pre_sequence) in self.dict_prefix_index:
+            print("频繁模式：", tuple(pre_sequence), "对应的待查找的后缀索引为：",
+                  self.dict_prefix_index[tuple(pre_sequence)])
         # 第二部：查找该序列模式新的后缀索引，这里只处理一个序列模式的查找。 sequence：['支付服务', '慰藉服务']
-        self.get_postfix_project_index_when_len_sequence_more(cursor_project, sequence,
-                                                              self.dict_prefix_index[tuple(sequence)])
-
-
-
-
-
-
-
-
-
-        count_cp = cursor_project.count()  # 所有documents的数量
-        cursor_project.rewind()
-        str_sequence = sequence[-1]  # 获取序列中的最后一个service_name
-        list_project = []  # 用于存放投影序列开始索引位置的队列，为每一个前缀service_name
-
+        list_project = self.get_postfix_project_index_when_len_sequence_more(cursor_project, sequence,
+                                                                             self.dict_prefix_index[tuple(pre_sequence)])
+        print("频繁模式：", tuple(sequence), ", 对应的后缀开始索引列表：", list_project)
         return list_project
 
     """获取前缀索引的队列  返回值是 前缀索引队列 sequence：['支付服务', '慰藉服务']
@@ -192,6 +183,7 @@ class PrefixSpanSD:
     """
     def get_postfix_project_index_when_len_sequence_more(self, cursor_project, sequence, before_postfix_list):
         cursor_project.rewind()
+        count_of_cursor_project = cursor_project.count()
         # 第一步：取出sequence序列中最后一个元素
         str_last_ele = sequence[-1]
         # 定义存放suffix的队列
@@ -202,16 +194,31 @@ class PrefixSpanSD:
             current_trans_no = single_doc.get("trans_no")  # 获取对应的trans_no
             # 获取开始索引对应的序列集合, _id生序排列
             collection = self.db.get_collection(self.collection_read)
-            var_cursor = collection.find({"trans_no": current_trans_no, "service_name": str_last_ele,
-                                          "_id": {"$gte": var_start_index}}).sort({"_id": 1})
+            var_cursor = collection.find({"trans_no": current_trans_no, "service_name": str_last_ele})
             count_var_cursor = var_cursor.count()
             if count_var_cursor == 0:
                 continue
-            for part_doc in var_cursor:
-                if part_doc.get("service_name") == str_last_ele:
-                    suffix_id = part_doc.get("_id") + 1
-                    if current_trans_no == cursor_project.__getitem__(suffix_id - 1).get("trans_no"):
-                        suffix_index.append(suffix_id)
+            # else:
+                # print("存在", count_var_cursor, "条doc, _id:", var_cursor.__getitem__(0).get("_id"))
+            part_doc = var_cursor.__getitem__(0)  # 获取第一个doc
+            exist_id = part_doc.get("_id")
+            if exist_id == count_of_cursor_project:
+                break
+            # 获取下一个_id对应的trans_no, +1 对应下一个， -1对应 _getitem()从0开始获取第一个document
+            trans_no_of_next_id = cursor_project.__getitem__(exist_id + 1 - 1).get("trans_no")  # 获取下一个_id对应的trans_no
+            if trans_no_of_next_id == current_trans_no:
+                # 可以投影得到后缀序列
+                # print("exist_id:", exist_id)
+                new_start_index = exist_id + 1
+                suffix_index.append(new_start_index)
+                # 第二小部分：对投影数据扫描一次，找到他的局部频繁项
+                fp_cursor = collection.find({"trans_no": current_trans_no,  "_id": {"$gt": new_start_index}})
+                for
+            else:
+                continue
+        return suffix_index
+
+
 
 
 

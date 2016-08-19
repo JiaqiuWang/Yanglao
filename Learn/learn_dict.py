@@ -19,9 +19,13 @@ print("Value :", dict3.items())
 print("Value :", dict3.items())
 
 # 测试把list设定为字典数据结构的key
-list2 = ['支付服务', '精神慰藉服务']
+list2 = ['支付服务']
 list_index = [358, 369, 407, 531, 600, 697, 937, 1044, 1191, 1391, 1472, 1521]
 dict3.setdefault(tuple(list2), list_index)
+dict3.clear()
+print("after clear dict3:", dict3)
+
+print("一个元素的list的dict3:", dict3[tuple(list2)])
 
 print("测试把list设定为字典数据结构的key\ndict3: ", dict3)
 tuple_key = tuple(list2)
