@@ -26,6 +26,8 @@ class PrefixSpanSD:
     total_counts = 0
     # 将前缀序列和对应的投影索引列表，存放字典中
     dict_prefix_index = {}
+    # 局部频繁序列_字典数据结构
+    part_fplist_dict_more = {}
 
     """构造函数"""
     def __init__(self, min_sup, uid, db_name, collection_read, project_records):
@@ -152,8 +154,8 @@ class PrefixSpanSD:
         if list_project is None:
             print("没有获取到投影的索引序列(list_project = None)")
         else:
-            print("需要形成投影的前缀(sequence)：", sequence)
-            print("产生的伪投影索引队列(list_project):", list_project)
+            # print("需要形成投影的前缀(sequence)：", sequence)
+            # print("产生的伪投影索引队列(list_project):", list_project)
             # 将前缀序列和对应的投影索引列表，存放字典中
             self.dict_prefix_index.setdefault(tuple(sequence), list_project)
             # 第二小部分：对投影数据扫描一次，找到他的局部频繁项
@@ -212,8 +214,23 @@ class PrefixSpanSD:
                 new_start_index = exist_id + 1
                 suffix_index.append(new_start_index)
                 # 第二小部分：对投影数据扫描一次，找到他的局部频繁项
+                # 查询得到投影序列的游标，
                 fp_cursor = collection.find({"trans_no": current_trans_no,  "_id": {"$gt": new_start_index}})
-                for
+
+                temp_list_dis_dup = []  # 用于判断一个tran_no忠是否有重复的service_name,重复的去掉
+                for var_doc in fp_cursor:
+                    service_name = var_doc.get("service_name")
+                    if service_name is None:
+                        print("service_name 获取失败！, break!")
+                        break
+                    elif service_name in temp_list_dis_dup:
+                        continue
+                    else:
+                        temp_list_dis_dup.append(service_name)
+                        if service_name not in self.part_fplist_dict_more:
+                            self.part_fplist_dict_more[service_name] = 1
+                        else:
+                            self.part_fplist_dict_more[service_name] += 1
             else:
                 continue
         return suffix_index
@@ -273,7 +290,9 @@ class PrefixSpanSD:
                 next_trans_no += 1
         return list_project
 
+
 #-----------------------------------------------------------------------------------------------------------------#
+
 
     """形成前缀数据库，物理数据库投影方法"""
     @classmethod
