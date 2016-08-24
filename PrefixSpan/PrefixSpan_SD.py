@@ -426,4 +426,4 @@ if __name__ == "__main__":
     main_operation()
     # 记录算法运行结束时间
     end_time = time.clock()
-    print("Running time: %s Seconds" % (end_time - start_time))  # 输出运行时间
+    print("Running time: %s Seconds" % (end_time - start_time))  # 输出运行时间(包括最后输出所有结果)
