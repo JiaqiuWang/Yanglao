@@ -114,13 +114,15 @@ class PrefixSpanSD:
     用于判断是否上一次扫描的局部投影数据库是否产生新的频繁序列模式
     """
     def decide_continue_termination(self, var_cursor):
-        while self.fp_candidate is not None:
+        while self.fp_candidate:
             print("fp_candidate is not None!")
             fp_candidate_duplicate = self.fp_candidate.copy()  # 复制上一步新生成的频繁序列模式
             self.fp_candidate.clear()   # 先清空，再看是否后续扫描具有新添加的频繁序列模式
-            self.find_prefix_subset(fp_candidate_duplicate, var_cursor)
+            if fp_candidate_duplicate:
+                self.find_prefix_subset(fp_candidate_duplicate, var_cursor)
             fp_candidate_duplicate.clear()  # 等找完新的一轮频繁序列模式后，再清空复制的副本
         print("算法终止！")
+        self.printout_fp_list()  # 输出所有频繁序列模式
 
 # --------------------------------------------------------------------------------------------------------- #
 
@@ -128,11 +130,12 @@ class PrefixSpanSD:
     def find_prefix_subset(self, fp_candidate_duplicate, cursor_project):
         # 循环得到每个频繁的序列
         if fp_candidate_duplicate is not None:
-            print("频繁的序列模式-：")
+            print("频繁的序列模式-：pf_candidate_duplicate", fp_candidate_duplicate)
             for i in fp_candidate_duplicate:
                 print("sequence: ", i.sequence, ", sup:", i.support, ", type(i):", type(i))
                 # 形成前缀数据库，# 两种选择，如果数据量大于阈值，放到实际的数据库里面形成物理存储；+
                 # 如果数据量小于阈值，则放入内存里面
+                self.part_fplist_dict_more.clear()
                 if self.total_counts <= self.project_records:
                     self.create_prefix_subsets_virtual_project(i.sequence, cursor_project, i.support)
                 else:
@@ -150,7 +153,8 @@ class PrefixSpanSD:
         if len(sequence) == 1:
             list_project = self.get_prefix_project_index_when_len_sequence_is_one(cursor_project, sequence)
         elif len(sequence) > 1:
-            list_project = self.get_prefix_project_index_when_len_sequence_more(cursor_project, sequence)
+            self.get_prefix_project_index_when_len_sequence_more(cursor_project, sequence, support)
+            return
         if list_project is None:
             print("没有获取到投影的索引序列(list_project = None)")
         else:
@@ -163,7 +167,7 @@ class PrefixSpanSD:
             self.scan_fplist_for_sequences(sequence, list_project, dup_cursor, support)
 
     """获取前缀索引的队列  返回值是 前缀索引队列"""
-    def get_prefix_project_index_when_len_sequence_more(self, cursor_project, sequence):
+    def get_prefix_project_index_when_len_sequence_more(self, cursor_project, sequence, support):
         # 第一种情况，放到内存里面，形成虚拟投影
         # 第一步：获取到前一个序列中的索引序列，存储后缀索引的字典数据结构为：key: (支付服务，慰藉服务)tuple，value:[10,2]list
         print("dict_prefix_index:", self.dict_prefix_index)
@@ -174,16 +178,18 @@ class PrefixSpanSD:
         if tuple(pre_sequence) in self.dict_prefix_index:
             print("频繁模式：", tuple(pre_sequence), "对应的待查找的后缀索引为：",
                   self.dict_prefix_index[tuple(pre_sequence)])
+        if len(sequence) >= 4 and len(self.dict_prefix_index[tuple(pre_sequence)]) < self.final_trans_no * self.min_sup:
+            print("该序列对应的待查找的后缀索引元素个数少：", len(self.dict_prefix_index[tuple(pre_sequence)]),
+                  ", 以至于不能产生局部频繁项！返回！")
+            return
         # 第二部：查找该序列模式新的后缀索引，这里只处理一个序列模式的查找。 sequence：['支付服务', '慰藉服务']
-        list_project = self.get_postfix_project_index_when_len_sequence_more(cursor_project, sequence,
-                                                                             self.dict_prefix_index[tuple(pre_sequence)])
-        print("频繁模式：", tuple(sequence), ", 对应的后缀开始索引列表：", list_project)
-        return list_project
+        self.get_postfix_project_index_when_len_sequence_more(cursor_project, sequence,
+                                                              self.dict_prefix_index[tuple(pre_sequence)], support)
 
     """获取前缀索引的队列  返回值是 前缀索引队列 sequence：['支付服务', '慰藉服务']
     before_post_list: 支付服务的后缀List
     """
-    def get_postfix_project_index_when_len_sequence_more(self, cursor_project, sequence, before_postfix_list):
+    def get_postfix_project_index_when_len_sequence_more(self, cursor_project, sequence, before_postfix_list, support):
         cursor_project.rewind()
         count_of_cursor_project = cursor_project.count()
         # 第一步：取出sequence序列中最后一个元素
@@ -196,7 +202,8 @@ class PrefixSpanSD:
             current_trans_no = single_doc.get("trans_no")  # 获取对应的trans_no
             # 获取开始索引对应的序列集合, _id生序排列
             collection = self.db.get_collection(self.collection_read)
-            var_cursor = collection.find({"trans_no": current_trans_no, "service_name": str_last_ele})
+            var_cursor = collection.find({"trans_no": current_trans_no, "service_name": str_last_ele,
+                                          "_id": {"$gte": var_start_index}})
             count_var_cursor = var_cursor.count()
             if count_var_cursor == 0:
                 continue
@@ -205,9 +212,10 @@ class PrefixSpanSD:
             part_doc = var_cursor.__getitem__(0)  # 获取第一个doc
             exist_id = part_doc.get("_id")
             if exist_id == count_of_cursor_project:
-                break
+                continue
             # 获取下一个_id对应的trans_no, +1 对应下一个， -1对应 _getitem()从0开始获取第一个document
-            trans_no_of_next_id = cursor_project.__getitem__(exist_id + 1 - 1).get("trans_no")  # 获取下一个_id对应的trans_no
+            # 获取下一个_id对应的trans_no
+            trans_no_of_next_id = cursor_project.__getitem__(exist_id + 1 - 1).get("trans_no")
             if trans_no_of_next_id == current_trans_no:
                 # 可以投影得到后缀序列
                 # print("exist_id:", exist_id)
@@ -215,8 +223,7 @@ class PrefixSpanSD:
                 suffix_index.append(new_start_index)
                 # 第二小部分：对投影数据扫描一次，找到他的局部频繁项
                 # 查询得到投影序列的游标，
-                fp_cursor = collection.find({"trans_no": current_trans_no,  "_id": {"$gt": new_start_index}})
-
+                fp_cursor = collection.find({"trans_no": current_trans_no,  "_id": {"$gte": new_start_index}})
                 temp_list_dis_dup = []  # 用于判断一个tran_no忠是否有重复的service_name,重复的去掉
                 for var_doc in fp_cursor:
                     service_name = var_doc.get("service_name")
@@ -233,13 +240,35 @@ class PrefixSpanSD:
                             self.part_fplist_dict_more[service_name] += 1
             else:
                 continue
-        return suffix_index
+        if suffix_index is not None:
+            if len(sequence) >= 4 and len(suffix_index) < self.final_trans_no * self.min_sup:
+                print("该序列的后缀开始索引列表有值！但是元素个数少：", len(suffix_index), ", 以至于不能产生局部频繁项！返回！")
+                return
+            # 将前缀序列和对应的投影索引列表，存放字典中
+            self.dict_prefix_index.setdefault(tuple(sequence), suffix_index)
+            print("频繁模式：", tuple(sequence), ", 对应的后缀开始索引列表：", suffix_index,
+                  ", \n对应的局部频繁字典：", self.part_fplist_dict_more)
+            # 计算相对支持度
+            for var_dict in self.part_fplist_dict_more.keys():
+                list_fp = sequence.copy()
+                num_var = 0
+                if len(sequence) >= 4:
+                    num_var = self.part_fplist_dict_more[var_dict] / self.final_trans_no
+                elif len(sequence) < 4:
+                    num_var = self.part_fplist_dict_more[var_dict] / len(suffix_index)
+                self.part_fplist_dict_more[var_dict] = round(num_var, 3)
+                # 如果局部一项的相对支持度大于等于min_sup，把他链接到前一个频繁序列模式上
+                if self.part_fplist_dict_more[var_dict] >= self.min_sup:
+                    list_fp.extend([var_dict])
+                    fs_var = FrequentSequences.SequencesFP(list_fp, min(support, self.part_fplist_dict_more[var_dict]))
+                    self.fp_list.append(fs_var)
+                    self.fp_candidate.append(fs_var)
+                    print("频繁序列模式：", fs_var.sequence, ", support:", fs_var.support)
+        else:
+            print("该序列的后缀开始索引列表为空！并且不会再判断此序列的后缀！返回！")
+            return
 
-
-
-
-
-
+# ---------------------------------------------------------------------------------------------
 
     """获取前缀索引的队列  返回值是 前缀索引队列"""
     def get_prefix_project_index_when_len_sequence_is_one(self, cursor_project, sequence):
@@ -290,9 +319,7 @@ class PrefixSpanSD:
                 next_trans_no += 1
         return list_project
 
-
-#-----------------------------------------------------------------------------------------------------------------#
-
+# -----------------------------------------------------------------------------------------------------------------#
 
     """形成前缀数据库，物理数据库投影方法"""
     @classmethod
@@ -302,7 +329,7 @@ class PrefixSpanSD:
         print("物理数据库投影方法，")
         print(sequence, support, cursor_project)
 
-#-----------------------------------------------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------------------------------------------#
 
     # 第二小部分：对投影数据扫描一次，找到他的局部频繁项。sequence：前面的频繁序列，list_project所投影的数据库，
     # dup_cursor: 之前查询的所有游标集合， sequence: ['支付服务']
@@ -379,7 +406,7 @@ class PrefixSpanSD:
 
 def main_operation():
     """Part1: 设置参数"""
-    min_sup = 0.15  # 最小支持度阈值
+    min_sup = 0.18  # 最小支持度阈值
     uid = "p1"  # 用户标识
     db_name = "yanglao"  # 数据库名称
     collection_read = "fp_trans_"+uid  # 待第一次扫描的序列数据库
@@ -397,6 +424,6 @@ if __name__ == "__main__":
     start_time = time.clock()
     # main_operation
     main_operation()
-    # 记录算法运行开始时间
+    # 记录算法运行结束时间
     end_time = time.clock()
     print("Running time: %s Seconds" % (end_time - start_time))  # 输出运行时间
