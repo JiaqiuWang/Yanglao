@@ -28,6 +28,8 @@ class PrefixSpanSD:
     dict_prefix_index = {}
     # 局部频繁序列_字典数据结构
     part_fplist_dict_more = {}
+    # 存放每一个频繁序列模式的序列号的字典，用于在第二层和第三层中使用
+    contain_trans_no_higher_layer = {}
 
     """构造函数"""
     def __init__(self, min_sup, uid, db_name, collection_read, project_records):
@@ -44,7 +46,7 @@ class PrefixSpanSD:
         self.client.close()
         print(class_name, "has Destroyed！")
 
-# --------------------------------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------------------------------------------- #
 
     """第一部分：读取序列数据库，得到频繁一序列"""
     def findall_sequences(self, col_name):
@@ -79,6 +81,8 @@ class PrefixSpanSD:
             self.decide_continue_termination(var_cursor)
             # print("count_orig_seq:", count_orig_seq)
 
+# ---------------------------------------------------------------------------------------------------------------------
+
     """查找不同序列的支持度
     temp_sequence: 扫描前的一序列(字符串)，temp_var_cursor: 游标重新回到开始原点的所有文档集合
     """
@@ -110,6 +114,55 @@ class PrefixSpanSD:
             self.fp_list.append(sp)  # 存储所有扫描次数的频繁序列模式
             # print("type-fplist:", type(self.fp_list), "fp_list:", self.fp_list)
 
+# ---------------------------------------------------------------------------------------------------------------------
+
+    """
+    用于判断是否上一次扫描的局部投影数据库是否产生新的频繁序列模式
+    """
+    def high_layer_for_mining_behavior_patterns(self):
+        if self.contain_trans_no_higher_layer:
+            print("输出频繁序列模式和对应的trans_no_contain, 数据结构为字典：")
+            collection = self.db.get_collection(self.db_name)
+            for tuple_fp_seq in self.contain_trans_no_higher_layer.keys():
+                contain_list_trans_no = self.contain_trans_no_higher_layer[tuple_fp_seq]
+                print("频繁序列: ", tuple_fp_seq, ", 对应的包含trans_no列表:", contain_list_trans_no)
+                # 嵌套for循环 contain_list_trans_no: [144, 149, 400, 501, 519, ... ]
+                for var_begin_index in contain_list_trans_no:
+                    var_cursor_trans = collection.find({"trans_no": var_begin_index})
+                    # 再嵌套for循环，查找游标中是否包含-频繁序列:  ('支付服务', '快递服务', '咨询服务')
+                    for var_one_doc in var_cursor_trans:
+                        flag_service_name = var_one_doc.get("service_name")
+                        if flag_service_name in tuple_fp_seq:
+                            # 如果在trans_no中找到对应的频繁序列中的元素，则把该doc传递给第二层，三层运算
+                            self.layer_app_name(var_one_doc)
+                            self.layer_multiple_dimension(var_one_doc)
+        else:
+            print("self.contain_trans_no_higher_layer is None!")
+
+# ---------------------------------------------------------------------------------------------------------------------
+
+    """
+    第二层频繁模式和关联规则：App_names
+    """
+    def layer_app_name(self, var_one_doc):
+        app_name = var_one_doc.get("from")
+        if app_name is None:
+            app_name = "线下养老院"
+        print("App_name:", app_name)
+
+# ---------------------------------------------------------------------------------------------------------------------
+
+    """
+    第三层挖掘属性集合的FP-Growth:
+    """
+    def layer_multiple_dimension(self, var_one_doc):
+        app_name = var_one_doc.get("from")
+        if app_name is None:
+            app_name = "线下养老院"
+        print("App_name:", app_name)
+
+# ---------------------------------------------------------------------------------------------------------------------
+
     """
     用于判断是否上一次扫描的局部投影数据库是否产生新的频繁序列模式
     """
@@ -123,8 +176,11 @@ class PrefixSpanSD:
             fp_candidate_duplicate.clear()  # 等找完新的一轮频繁序列模式后，再清空复制的副本
         print("算法终止！")
         self.printout_fp_list()  # 输出所有频繁序列模式
+        # self.printout_trans_no_contain()
+        # 运行算法第二层的程序，要使用FP-Growth挖掘 App_name or service_name的频繁模式
+        self.high_layer_for_mining_behavior_patterns()
 
-# --------------------------------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------------------------------------------- #
 
     """第二部分：划分并且挖掘每个频繁序列的前缀子集，并且形成投影数据库，然后挖掘局部频繁项"""
     def find_prefix_subset(self, fp_candidate_duplicate, cursor_project):
@@ -143,6 +199,8 @@ class PrefixSpanSD:
                 # 对所形成的投影数据库扫描一次，得出一个局部频繁项
         else:
             print("频繁序列对象为None!")
+
+# ---------------------------------------------------------------------------------------------------------------------
 
     """形成前缀数据库，虚拟投影方法"""
     def create_prefix_subsets_virtual_project(self, sequence, cursor_project, support):
@@ -166,6 +224,8 @@ class PrefixSpanSD:
             dup_cursor = cursor_project.clone()
             self.scan_fplist_for_sequences(sequence, list_project, dup_cursor, support)
 
+# ----------------------------------------------------------------------------------------------------------------------
+
     """获取前缀索引的队列  返回值是 前缀索引队列"""
     def get_prefix_project_index_when_len_sequence_more(self, cursor_project, sequence, support):
         # 第一种情况，放到内存里面，形成虚拟投影
@@ -186,6 +246,8 @@ class PrefixSpanSD:
         self.get_postfix_project_index_when_len_sequence_more(cursor_project, sequence,
                                                               self.dict_prefix_index[tuple(pre_sequence)], support)
 
+# ---------------------------------------------------------------------------------------------------------------------
+
     """获取前缀索引的队列  返回值是 前缀索引队列 sequence：['支付服务', '慰藉服务']
     before_post_list: 支付服务的后缀List
     """
@@ -196,6 +258,10 @@ class PrefixSpanSD:
         str_last_ele = sequence[-1]
         # 定义存放suffix的队列
         suffix_index = []
+        # 定义list数据结构：存放包含sequence的trans_no_contain
+        list_trans_no_contain = []
+        if not list_trans_no_contain:
+            list_trans_no_contain.clear()
         # 第二部：查询每个before_postfix_list中index对应trans_no有无str_last_ele
         for var_start_index in before_postfix_list:
             single_doc = cursor_project.__getitem__(var_start_index - 1)  # 获取开始索引对应的document
@@ -213,6 +279,9 @@ class PrefixSpanSD:
             exist_id = part_doc.get("_id")
             if exist_id == count_of_cursor_project:
                 continue
+            # 树中第二层中的部分：从元素个数为2的序列开始，获取序列对应的trans_no，保持到全局变量的字典里面
+            trans_no_contain = part_doc.get("trans_no")
+            list_trans_no_contain.append(trans_no_contain)
             # 获取下一个_id对应的trans_no, +1 对应下一个， -1对应 _getitem()从0开始获取第一个document
             # 获取下一个_id对应的trans_no
             trans_no_of_next_id = cursor_project.__getitem__(exist_id + 1 - 1).get("trans_no")
@@ -240,7 +309,12 @@ class PrefixSpanSD:
                             self.part_fplist_dict_more[service_name] += 1
             else:
                 continue
-        if suffix_index is not None:
+        # 将sequence对应的包括trans_no_contain队列写入到，字典中
+        if list_trans_no_contain:
+            self.contain_trans_no_higher_layer.setdefault(tuple(sequence), list_trans_no_contain)
+            print("频繁模式：", tuple(sequence), ", 对应的包含序列号(trans_no_contain):",
+                  self.contain_trans_no_higher_layer[tuple(sequence)])
+        if suffix_index:
             if len(sequence) >= 4 and len(suffix_index) < self.final_trans_no * self.min_sup:
                 print("该序列的后缀开始索引列表有值！但是元素个数少：", len(suffix_index), ", 以至于不能产生局部频繁项！返回！")
                 return
@@ -268,7 +342,7 @@ class PrefixSpanSD:
             print("该序列的后缀开始索引列表为空！并且不会再判断此序列的后缀！返回！")
             return
 
-# ---------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 
     """获取前缀索引的队列  返回值是 前缀索引队列"""
     def get_prefix_project_index_when_len_sequence_is_one(self, cursor_project, sequence):
@@ -331,7 +405,7 @@ class PrefixSpanSD:
 
 # -----------------------------------------------------------------------------------------------------------------#
 
-    # 第二小部分：对投影数据扫描一次，找到他的局部频繁项。sequence：前面的频繁序列，list_project所投影的数据库，
+    # 第二小部分：对投影数据扫描一次，找到他的局部频繁项。sequence：前面的频繁序列，list_project所投影的后缀索引列表，
     # dup_cursor: 之前查询的所有游标集合， sequence: ['支付服务']
     def scan_fplist_for_sequences(self, sequence, list_project, dup_cursor, support):
         if dup_cursor is None or sequence is None or list_project is None:
@@ -357,7 +431,7 @@ class PrefixSpanSD:
                 print("频繁序列模式：", fs_var.sequence, ", support:", fs_var.support)
         print("输出所有的局部扫描项字典：", part_fplist)
 
-# --------------------------------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------------------------------------------- #
 
     """获取局部频繁项：递归调用的函数"""
     def scan_fplist(self, dup_cursor, var_start_index, list_part_fp):
@@ -383,14 +457,7 @@ class PrefixSpanSD:
                     else:
                         list_part_fp[service_name] += 1
 
-    """输出频繁序列和对应的支持度"""
-    def printout_fp_list(self):
-        if self.fp_list is not None:
-            print("频繁的序列模式：")
-            for i in self.fp_list:
-                print("sequence: ", i.sequence, ", sup:", i.support, ", type(i):", type(i))
-        else:
-            print("频繁序列对象为None!")
+# ---------------------------------------------------------------------------------------------------------------------
 
     """获取单个document的方法"""
     @classmethod
@@ -402,6 +469,31 @@ class PrefixSpanSD:
             return None
         else:
             return flag_trans_no
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+    """输出频繁序列模式和对应的trans_no_contain, 数据结构为字典"""
+    def printout_trans_no_contain(self):
+        if self.contain_trans_no_higher_layer:
+            print("输出频繁序列模式和对应的trans_no_contain, 数据结构为字典：")
+            for i in self.contain_trans_no_higher_layer.keys():
+                print("序列: ", i, ", 对应的trans_no_contain:", self.contain_trans_no_higher_layer[i],
+                      ", type(i):", type(i))
+        else:
+            print("频繁序列对象为None!")
+
+# ---------------------------------------------------------------------------------------------------------------------
+
+    """输出频繁序列和对应的支持度"""
+    def printout_fp_list(self):
+        if self.fp_list is not None:
+            print("频繁的序列模式：")
+            for i in self.fp_list:
+                print("sequence: ", i.sequence, ", sup:", i.support, ", type(i):", type(i))
+        else:
+            print("频繁序列对象为None!")
+
+# ----------------------------------------------------------------------------------------------------------
 
 
 def main_operation():
