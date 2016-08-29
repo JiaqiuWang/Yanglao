@@ -121,21 +121,33 @@ class PrefixSpanSD:
     """
     def high_layer_for_mining_behavior_patterns(self):
         if self.contain_trans_no_higher_layer:
-            print("输出频繁序列模式和对应的trans_no_contain, 数据结构为字典：")
-            collection = self.db.get_collection(self.db_name)
+            print("输出频繁序列模式和对应的trans_no_contain, 数据结构为字典：,high_layer_for_mining_behavior_patterns")
+            # collection = self.db.get_collection(self.db_name)
             for tuple_fp_seq in self.contain_trans_no_higher_layer.keys():
                 contain_list_trans_no = self.contain_trans_no_higher_layer[tuple_fp_seq]
                 print("频繁序列: ", tuple_fp_seq, ", 对应的包含trans_no列表:", contain_list_trans_no)
                 # 嵌套for循环 contain_list_trans_no: [144, 149, 400, 501, 519, ... ]
                 for var_begin_index in contain_list_trans_no:
-                    var_cursor_trans = collection.find({"trans_no": var_begin_index})
+                    print("每一个包含序列的trans_no:", var_begin_index)
+                    collection = self.db.get_collection(self.db_name)
+                    cursor_trans_high_layer = collection.find({"trans_no": var_begin_index})
+                    if not cursor_trans_high_layer:
+                        print("查找每个trans_no_contain的游标为空值！")
+                        continue
+                    else:
+                        print("找到的游标为：", cursor_trans_high_layer)
+                        self.deal_cursor_trans_high_layer(cursor_trans_high_layer)
                     # 再嵌套for循环，查找游标中是否包含-频繁序列:  ('支付服务', '快递服务', '咨询服务')
-                    for var_one_doc in var_cursor_trans:
-                        flag_service_name = var_one_doc.get("service_name")
-                        if flag_service_name in tuple_fp_seq:
-                            # 如果在trans_no中找到对应的频繁序列中的元素，则把该doc传递给第二层，三层运算
-                            self.layer_app_name(var_one_doc)
-                            self.layer_multiple_dimension(var_one_doc)
+                    #
+                    # for one_doc_high_layer in cursor_trans_high_layer:
+                    #     print("找到的每个文档：", one_doc_high_layer)
+                    #     flag_service_name = one_doc_high_layer.get("service_name")
+                    #     flag_id = one_doc_high_layer.get("_id")
+                    #     print("找到的游标中的文档flag_id:", flag_id, ", service_name:", flag_service_name)
+                    #     if flag_service_name in tuple_fp_seq:
+                    #         # 如果在trans_no中找到对应的频繁序列中的元素，则把该doc传递给第二层，三层运算
+                    #         self.layer_app_name(one_doc_high_layer)
+                    #         self.layer_multiple_dimension(one_doc_high_layer)
         else:
             print("self.contain_trans_no_higher_layer is None!")
 
@@ -149,6 +161,18 @@ class PrefixSpanSD:
         if app_name is None:
             app_name = "线下养老院"
         print("App_name:", app_name)
+
+    """
+        第二层频繁模式和关联规则：App_names
+        """
+
+# ---------------------------------------------------------------------------------------------------------------------
+
+
+    def deal_cursor_trans_high_layer(self, cursor_trans_high_layer):
+        print("验证cursor_trans_high_layer")
+        for i in cursor_trans_high_layer:
+            print("i:", i)
 
 # ---------------------------------------------------------------------------------------------------------------------
 
