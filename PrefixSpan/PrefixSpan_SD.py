@@ -8,6 +8,7 @@ function:
 import time
 import pymongo
 import FrequentSequences
+import pyfpgrowth
 
 
 class PrefixSpanSD:
@@ -122,57 +123,70 @@ class PrefixSpanSD:
     def high_layer_for_mining_behavior_patterns(self):
         if self.contain_trans_no_higher_layer:
             print("输出频繁序列模式和对应的trans_no_contain, 数据结构为字典：,high_layer_for_mining_behavior_patterns")
-            # collection = self.db.get_collection(self.db_name)
+            collection = self.db.get_collection(self.collection_read)
             for tuple_fp_seq in self.contain_trans_no_higher_layer.keys():
                 contain_list_trans_no = self.contain_trans_no_higher_layer[tuple_fp_seq]
-                print("频繁序列: ", tuple_fp_seq, ", 对应的包含trans_no列表:", contain_list_trans_no)
+                list_fp_seq = list(tuple_fp_seq)
+                print("频繁序列: ", list_fp_seq, ", 对应的包含trans_no列表:", contain_list_trans_no)
+                list_fp_seq_dup = list_fp_seq.copy()
+                transactions = []  # 事务
+                if transactions:
+                    transactions.clear()
                 # 嵌套for循环 contain_list_trans_no: [144, 149, 400, 501, 519, ... ]
                 for var_begin_index in contain_list_trans_no:
-                    print("每一个包含序列的trans_no:", var_begin_index)
-                    collection = self.db.get_collection(self.db_name)
+                    # print("每一个包含序列的trans_no:", var_begin_index)
                     cursor_trans_high_layer = collection.find({"trans_no": var_begin_index})
                     if not cursor_trans_high_layer:
                         print("查找每个trans_no_contain的游标为空值！")
                         continue
-                    else:
-                        print("找到的游标为：", cursor_trans_high_layer)
-                        self.deal_cursor_trans_high_layer(cursor_trans_high_layer)
-                    # 再嵌套for循环，查找游标中是否包含-频繁序列:  ('支付服务', '快递服务', '咨询服务')
-                    #
-                    # for one_doc_high_layer in cursor_trans_high_layer:
-                    #     print("找到的每个文档：", one_doc_high_layer)
-                    #     flag_service_name = one_doc_high_layer.get("service_name")
-                    #     flag_id = one_doc_high_layer.get("_id")
-                    #     print("找到的游标中的文档flag_id:", flag_id, ", service_name:", flag_service_name)
-                    #     if flag_service_name in tuple_fp_seq:
-                    #         # 如果在trans_no中找到对应的频繁序列中的元素，则把该doc传递给第二层，三层运算
-                    #         self.layer_app_name(one_doc_high_layer)
-                    #         self.layer_multiple_dimension(one_doc_high_layer)
+                    # 再嵌套for循环，查找游标中是否包含-频繁序列:  ['支付服务', '快递服务', '咨询服务']
+                    list_fp_seq = list(tuple_fp_seq)
+                    item_sets = []  # 项集
+                    if item_sets:
+                        item_sets.clear()
+                    for one_doc_high_layer in cursor_trans_high_layer:
+                        flag_service_name = one_doc_high_layer.get("service_name")
+                        if flag_service_name in list_fp_seq:
+                            # print("_id:", one_doc_high_layer.get("_id"),
+                            #       ", service_name:", one_doc_high_layer.get("service_name"))
+                            # 将flag_service_name从list_fp_seq中删除：
+                            list_fp_seq.remove(flag_service_name)
+                            # 如果在trans_no中找到对应的频繁序列中的元素，则把该doc传递给第二层，三层运算
+                            app_name = self.layer_app_name(one_doc_high_layer)
+                            item_sets.append(app_name)
+                            # self.layer_multiple_dimension(one_doc_high_layer)
+                    transactions.append(item_sets)
+                self.create_transactions(list_fp_seq_dup, transactions)
         else:
             print("self.contain_trans_no_higher_layer is None!")
 
 # ---------------------------------------------------------------------------------------------------------------------
 
     """
-    第二层频繁模式和关联规则：App_names
+    第二层形成每个序列的，transaction事务序列，并输入标准算法
+    参数：sequence 频繁序列； transaction 所有App_name组成的事务集合
     """
-    def layer_app_name(self, var_one_doc):
-        app_name = var_one_doc.get("from")
-        if app_name is None:
-            app_name = "线下养老院"
-        print("App_name:", app_name)
+    @classmethod
+    def create_transactions(cls, sequence, transaction):
+        print("频繁序列：", sequence, ", 事务transaction: ", transaction)
+        min_sup = len(transaction) / 6
+        patterns = pyfpgrowth.find_frequent_patterns(transaction, min_sup)
+        print("频繁序列：", sequence, ", 频繁模式patterns: ", patterns)
 
-    """
-        第二层频繁模式和关联规则：App_names
-        """
+
 
 # ---------------------------------------------------------------------------------------------------------------------
 
-
-    def deal_cursor_trans_high_layer(self, cursor_trans_high_layer):
-        print("验证cursor_trans_high_layer")
-        for i in cursor_trans_high_layer:
-            print("i:", i)
+    """
+    返回：App_names
+    """
+    @classmethod
+    def layer_app_name(cls, var_one_doc):
+        app_name = var_one_doc.get("from")
+        if app_name is None:
+            app_name = "线下养老院"
+        # print("App_name:", app_name)
+        return app_name
 
 # ---------------------------------------------------------------------------------------------------------------------
 
