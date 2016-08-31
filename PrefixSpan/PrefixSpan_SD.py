@@ -4,7 +4,7 @@ Author: Jia_qiu Wang(王佳秋)
 Data: July, 2016
 function:
 """
-
+import codecs
 import time
 import pymongo
 import FrequentSequences
@@ -130,20 +130,28 @@ class PrefixSpanSD:
                 print("频繁序列: ", list_fp_seq, ", 对应的包含trans_no列表:", contain_list_trans_no)
                 list_fp_seq_dup = list_fp_seq.copy()
                 transactions = []  # 事务
+                transactions_layer3 = []
                 if transactions:
                     transactions.clear()
+                if transactions_layer3:
+                    transactions_layer3.clear()
                 # 嵌套for循环 contain_list_trans_no: [144, 149, 400, 501, 519, ... ]
                 for var_begin_index in contain_list_trans_no:
                     # print("每一个包含序列的trans_no:", var_begin_index)
-                    cursor_trans_high_layer = collection.find({"trans_no": var_begin_index})
+                    cursor_trans_high_layer = collection.find({"trans_no": var_begin_index},
+                                                              {"_id": 0, "times": 0, "pPer_id": 0,
+                                                               "psl_id": 0, "trans_no": 0})
                     if not cursor_trans_high_layer:
                         print("查找每个trans_no_contain的游标为空值！")
                         continue
                     # 再嵌套for循环，查找游标中是否包含-频繁序列:  ['支付服务', '快递服务', '咨询服务']
                     list_fp_seq = list(tuple_fp_seq)
                     item_sets = []  # 项集
+                    item_sets_layer3 = []  # 第三层的项集
                     if item_sets:
                         item_sets.clear()
+                    if item_sets_layer3:
+                        item_sets_layer3.clear()
                     for one_doc_high_layer in cursor_trans_high_layer:
                         flag_service_name = one_doc_high_layer.get("service_name")
                         if flag_service_name in list_fp_seq:
@@ -155,8 +163,22 @@ class PrefixSpanSD:
                             app_name = self.layer_app_name(one_doc_high_layer)
                             item_sets.append(app_name)
                             # self.layer_multiple_dimension(one_doc_high_layer)
+                            # 第三层属性key, value频繁模式层
+                            for var_item_in_each_doc in one_doc_high_layer:
+                                # print("key:", var_item_in_each_doc, ", value:",
+                                #       one_doc_high_layer[var_item_in_each_doc])
+                                if var_item_in_each_doc in ("from", "trans_no", "pay_ID", "service_name", "treat_plan"):
+                                    continue
+                                item_layer3_str = \
+                                    str(var_item_in_each_doc) + ":" + str(one_doc_high_layer[var_item_in_each_doc])
+                                item_sets_layer3.append(item_layer3_str)
+                    transactions_layer3.append(item_sets_layer3)
                     transactions.append(item_sets)
+                # 第二层App_names 频繁模式层
                 self.create_transactions(list_fp_seq_dup, transactions)
+                # 第三层属性key, value频繁模式层
+                self.create_transactions_for_layer3(list_fp_seq_dup, transactions_layer3)
+
         else:
             print("self.contain_trans_no_higher_layer is None!")
 
@@ -174,9 +196,29 @@ class PrefixSpanSD:
         print("频繁序列：", sequence, ", 频繁模式patterns: ", patterns)
 
 
-
 # ---------------------------------------------------------------------------------------------------------------------
 
+    """
+    第3层形成每个序列的，transaction事务序列，并输入标准算法
+    参数：sequence 频繁序列； transaction 所有App_name组成的事务集合
+    """
+    @classmethod
+    def create_transactions_for_layer3(cls, sequence, transaction):
+        print("频繁序列：", sequence, ", 事务transaction: ", transaction)
+        min_sup = len(transaction) / 3
+        patterns = pyfpgrowth.find_frequent_patterns(transaction, min_sup)
+        try:
+            print("频繁模式patterns: ", patterns)
+        except IOError:
+            f = codecs.open('out_print.txt', 'a+', 'utf-8')
+            f.write("频繁序列为："+str(sequence))
+            f.write("patterns:"+str(patterns))
+            f.write("\n")
+            f.close()
+        finally:
+            patterns.clear()
+
+# ---------------------------------------------------------------------------------------------------------------------
     """
     返回：App_names
     """
@@ -187,17 +229,6 @@ class PrefixSpanSD:
             app_name = "线下养老院"
         # print("App_name:", app_name)
         return app_name
-
-# ---------------------------------------------------------------------------------------------------------------------
-
-    """
-    第三层挖掘属性集合的FP-Growth:
-    """
-    def layer_multiple_dimension(self, var_one_doc):
-        app_name = var_one_doc.get("from")
-        if app_name is None:
-            app_name = "线下养老院"
-        print("App_name:", app_name)
 
 # ---------------------------------------------------------------------------------------------------------------------
 

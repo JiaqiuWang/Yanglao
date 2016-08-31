@@ -1,3 +1,11 @@
+"""
+Name: FP-Growth_WJQ: 改进的——前缀投影序列模式增长算法
+Author: Jia_qiu Wang(王佳秋)
+Data: July, 2016
+function:
+"""
+
+import codecs
 import itertools
 import pyfpgrowth
 
@@ -283,65 +291,54 @@ if __name__ == "__main__":
     print("Hello FP-Growth.")
     # transactions = [[1, 2, 5], [21, 9, 7], [2, 4], [2, 3], [1, 2, 4], [1, 3], [2, 3],
     #                 [1, 3], [1, 2, 3, 5], [1, 2, 3], [65, 54]]
-    transactions = [['Alipay', '小区快递', 'PayPal'],
-                    ['Alipay', '银联支付', '超市快递'],
-                    ['PayPal', 'Alipay', '超市快递'],
-                    ['Alipay', 'Alipay', '快递家'], ['PayPal', 'PayPal', '快递家'],
-                    ['Alipay', '快递家', '银联支付'], ['Wechat', 'PayPal', '快递家'],
-                    ['PayPal', 'PayPal', '快递家'], ['PayPal', '快递家', '银联支付'],
-                    ['银联支付', '小区快递', 'PayPal'], ['Alipay', '快递家', 'Alipay'],
-                    ['PayPal', 'PayPal', '快递家'], ['PayPal', 'PayPal', '快递家'],
-                    ['Alipay', 'PayPal', '快递家'], ['PayPal', '银联支付', '闪电购'],
-                    ['Alipay', '超市快递', 'PayPal'], ['Alipay', '超市快递', 'Alipay'],
-                    ['PayPal', 'PayPal', '超市快递'], ['PayPal', 'PayPal', '超市快递'],
-                    ['Alipay', 'PayPal', '快递家'], ['银联支付', 'Alipay', '快递家'],
-                    ['Wechat', 'Alipay', '小区快递'], ['Alipay', '快递家', 'PayPal'],
-                    ['PayPal', 'PayPal', '小区快递'], ['Alipay', '银联支付', '快递家'],
-                    ['Alipay', '超市快递', 'Alipay'], ['PayPal', '快递家', 'Alipay'],
-                    ['Alipay', '银联支付', '快递家'], ['PayPal', 'Alipay', '快递家'],
-                    ['PayPal', '快递家', 'Alipay'], ['Alipay', 'Alipay', '快递家'],
-                    ['PayPal', '银联支付', '快递家'], ['银联支付', 'Alipay', '快递家'],
-                    ['银联支付', 'PayPal', '超市快递'], ['PayPal', 'PayPal', '快递家'],
-                    ['PayPal', 'PayPal', '快递家'], ['Wechat', 'Alipay', '快递家'],
-                    ['Alipay', '快递家', 'PayPal'], ['PayPal', '超市快递', 'Alipay'],
-                    ['Alipay', 'Alipay', '超市快递'], ['PayPal', '闪电购', 'Alipay'],
-                    ['PayPal', '银联支付', '超市快递'], ['PayPal', 'Alipay', '超市快递'],
-                    ['Alipay', 'PayPal', '闪电购'], ['Alipay', '小区快递', '银联支付'],
-                    ['PayPal', 'PayPal', '超市快递'], ['PayPal', '超市快递', '银联支付'],
-                    ['Alipay', '超市快递', 'PayPal'], ['银联支付', '快递家', '银联支付'],
-                    ['PayPal', 'Alipay', '闪电购'], ['PayPal', '银联支付', '小区快递'],
-                    ['Alipay', 'PayPal', '闪电购'], ['PayPal', 'Alipay', '小区快递'],
-                    ['PayPal', 'PayPal', '闪电购'], ['Alipay', 'PayPal', '闪电购'],
-                    ['Credit Card', 'PayPal', '快递家'], ['PayPal', 'PayPal', '闪电购'],
-                    ['PayPal', 'PayPal', '小区快递'], ['银联支付', 'Alipay', '闪电购'],
-                    ['银联支付', 'PayPal', '小区快递'], ['PayPal', '超市快递', 'PayPal'],
-                    ['Wechat', 'PayPal', '超市快递'], ['PayPal', 'Alipay', '超市快递'],
-                    ['银联支付', 'Alipay', '快递家'], ['Alipay', 'PayPal', '闪电购'],
-                    ['银联支付', '快递家', '银联支付'], ['银联支付', '银联支付', '快递家'],
-                    ['PayPal', 'Alipay', '快递家'], ['Alipay', 'Alipay', '快递家'],
-                    ['PayPal', 'PayPal', '快递家'], ['PayPal', 'Alipay', '快递家'],
-                    ['PayPal', 'PayPal', '闪电购'], ['银联支付', '快递家', 'Alipay'],
-                    ['Alipay', 'Alipay', '快递家'], ['Alipay', 'PayPal', '超市快递'],
-                    ['PayPal', 'PayPal', '快递家'], ['PayPal', 'PayPal', '超市快递'],
-                    ['Credit Card', 'Alipay', '快递家'], ['Credit Card', '银联支付', '快递家'],
-                    ['银联支付', 'PayPal', '闪电购'], ['Wechat', 'PayPal', '闪电购'],
-                    ['PayPal', '闪电购', 'PayPal'], ['Alipay', 'PayPal', '闪电购'],
-                    ['Alipay', '闪电购', '银联支付'], ['Alipay', '银联支付', '闪电购'],
-                    ['PayPal', 'PayPal', '小区快递'], ['PayPal', '银联支付', '快递家'],
-                    ['银联支付', 'PayPal', '小区快递'], ['Credit Card', 'Alipay', '超市快递'],
-                    ['Alipay', 'Alipay', '快递家'], ['Credit Card', 'Alipay', '小区快递'],
-                    ['PayPal', 'PayPal', '快递家'], ['银联支付', '快递家', 'Alipay'],
-                    ['PayPal', '银联支付', '超市快递'], ['银联支付', 'Alipay', '小区快递'],
-                    ['Alipay', 'PayPal', '快递家'], ['PayPal', 'Alipay', '快递家'],
-                    ['Alipay', '小区快递', 'PayPal'], ['PayPal', 'Alipay', '超市快递'],
-                    ['PayPal', '银联支付', '超市快递'], ['PayPal', 'PayPal', '快递家'],
-                    ['银联支付', '小区快递', 'Alipay'], ['PayPal', 'PayPal', '小区快递'],
-                    ['PayPal', '快递家', 'PayPal'], ['Alipay', '闪电购', 'PayPal'],
-                    ['银联支付', '快递家', 'Alipay'], ['Alipay', '快递家', '银联支付'],
-                    ['Wechat', 'PayPal', '快递家'], ['Alipay', 'PayPal', '快递家'], ['Wechat', 'PayPal', '超市快递'], ['PayPal', '闪电购', 'PayPal'], ['PayPal', 'PayPal', '超市快递'], ['Alipay', 'PayPal', '快递家'], ['Credit Card', 'PayPal', '快递家'], ['PayPal', 'Alipay', '闪电购'], ['PayPal', 'PayPal', '快递家'], ['PayPal', 'Alipay', '快递家'], ['Alipay', 'Alipay', '快递家'], ['银联支付', 'Alipay', '快递家'], ['PayPal', '快递家', 'Alipay'], ['PayPal', 'PayPal', '快递家'], ['PayPal', '银联支付', '快递家'], ['PayPal', '银联支付', '小区快递'], ['Alipay', '小区快递', 'PayPal'], ['PayPal', 'Alipay', '小区快递'], ['PayPal', 'Alipay', '闪电购'], ['Alipay', '快递家', 'Alipay'], ['Wechat', 'PayPal', '超市快递'], ['Alipay', 'PayPal', '超市快递'], ['Alipay', '闪电购', 'PayPal'], ['PayPal', 'Alipay', '快递家'], ['PayPal', 'PayPal', '快递家'], ['Credit Card', 'PayPal', '快递家'], ['Alipay', 'PayPal', '快递家'], ['PayPal', 'Alipay', '快递家'], ['银联支付', '快递家', 'PayPal'], ['Alipay', 'Alipay', '超市快递'], ['PayPal', '闪电购', 'PayPal'], ['Alipay', 'PayPal', '超市快递'], ['Alipay', 'Alipay', '闪电购'], ['Wechat', 'PayPal', '超市快递'], ['Alipay', 'PayPal', '快递家'], ['Alipay', 'Alipay', '快递家']]
-    min_sup = len(transactions) / 8
-    patterns = pyfpgrowth.find_frequent_patterns(transactions, min_sup)
-    print(patterns, ", type(pattern):", type(patterns))
+    # 测试用例
+    transactions = [['drug_use_name:阿瑞斯', 'dDrugAllergy_name:庆大霉素类', 'drug_use_id:Dg5',
+                     'DoctorOrder_name:出于合理原因不完全遵从', 'DoctorOrder_id:t3', 'dDrugAllergy_id:DA2',
+                     'Psychotropic:no', 'drug_use_name:阿瑞斯', 'dDrugAllergy_name:庆大霉素类',
+                     'drug_use_id:Dg5', 'DoctorOrder_name:出于合理原因不完全遵从', 'DoctorOrder_id:t3',
+                     'dDrugAllergy_id:DA2', 'Psychotropic:yes', 'drug_use_name:微创置管血肿穿刺术',
+                     'dDrugAllergy_name:磺胺类', 'drug_use_id:Dg7', 'DoctorOrder_name:不遵从',
+                     'DoctorOrder_id:t4', 'dDrugAllergy_id:DA3', 'Psychotropic:yes'],
+                    ['drug_use_name:微创置管血肿穿刺术', 'dDrugAllergy_name:否', 'drug_use_id:Dg7',
+                     'DoctorOrder_name:不遵从', 'DoctorOrder_id:t4', 'dDrugAllergy_id:DA0',
+                     'Psychotropic:no', 'drug_use_name:微创置管血肿穿刺术', 'dDrugAllergy_name:磺胺类',
+                     'drug_use_id:Dg7', 'DoctorOrder_name:完全遵从', 'DoctorOrder_id:t1',
+                     'dDrugAllergy_id:DA3', 'Psychotropic:yes', 'drug_use_name:阿瑞斯',
+                     'dDrugAllergy_name:青霉素类', 'drug_use_id:Dg5', 'DoctorOrder_name:不遵从',
+                     'DoctorOrder_id:t4', 'dDrugAllergy_id:DA1', 'Psychotropic:no'],
+                    ['drug_use_name:微创置管血肿穿刺术', 'dDrugAllergy_name:磺胺类', 'drug_use_id:Dg7',
+                     'DoctorOrder_name:完全遵从', 'DoctorOrder_id:t1', 'dDrugAllergy_id:DA3',
+                     'Psychotropic:yes', 'drug_use_name:消炎咳药', 'dDrugAllergy_name:否', 'drug_use_id:Dg3',
+                     'DoctorOrder_name:出于合理原因不完全遵从', 'DoctorOrder_id:t3', 'dDrugAllergy_id:DA0',
+                     'Psychotropic:no', 'drug_use_name:阿瑞斯', 'dDrugAllergy_name:青霉素类',
+                     'drug_use_id:Dg5', 'DoctorOrder_name:出于合理原因不完全遵从', 'DoctorOrder_id:t3',
+                     'dDrugAllergy_id:DA1', 'Psychotropic:no'],
+                    ['drug_use_name:阿瑞斯', 'dDrugAllergy_name:磺胺类', 'drug_use_id:Dg5',
+                     'DoctorOrder_name:不完全遵从', 'DoctorOrder_id:t2', 'dDrugAllergy_id:DA3',
+                     'Psychotropic:yes', 'drug_use_name:阿瑞斯', 'dDrugAllergy_name:庆大霉素类',
+                     'drug_use_id:Dg5', 'DoctorOrder_name:出于合理原因不完全遵从', 'DoctorOrder_id:t3',
+                     'dDrugAllergy_id:DA2', 'Psychotropic:yes', 'drug_use_name:阿瑞斯', 'dDrugAllergy_name:否',
+                     'drug_use_id:Dg5', 'DoctorOrder_name:出于合理原因不完全遵从', 'DoctorOrder_id:t3',
+                     'dDrugAllergy_id:DA0', 'Psychotropic:yes'],
+                    ['drug_use_name:阿瑞斯', 'dDrugAllergy_name:青霉素类', 'drug_use_id:Dg5',
+                     'DoctorOrder_name:完全遵从', 'DoctorOrder_id:t1', 'dDrugAllergy_id:DA1',
+                     'Psychotropic:no', 'drug_use_name:消炎咳药', 'dDrugAllergy_name:庆大霉素类',
+                     'drug_use_id:Dg3', 'DoctorOrder_name:不遵从', 'DoctorOrder_id:t4', 'dDrugAllergy_id:DA2',
+                     'Psychotropic:no', 'drug_use_name:阿瑞斯', 'dDrugAllergy_name:庆大霉素类',
+                     'drug_use_id:Dg5', 'DoctorOrder_name:不遵从', 'DoctorOrder_id:t4', 'dDrugAllergy_id:DA2',
+                     'Psychotropic:yes']]
+    try:
+        # min_sup = len(transactions) / 3
+        min_sup = len(transactions) / 3
+        patterns = pyfpgrowth.find_frequent_patterns(transactions, min_sup)
+        print("pattern:", patterns)
+    except IOError:
+        min_sup = len(transactions) / 1.5
+        patterns = pyfpgrowth.find_frequent_patterns(transactions, min_sup)
+        f = codecs.open('out_print.txt', 'a+', 'utf-8')
+        f.write(str(patterns))
+        f.write("\n")
+        f.close()
 
     rules = pyfpgrowth.generate_association_rules(patterns, 0.5)  # 挖掘关联规则
     print("rule:", rules)
