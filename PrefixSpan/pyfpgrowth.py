@@ -1,5 +1,5 @@
 """
-Name: FP-Growth_WJQ: 改进的——前缀投影序列模式增长算法
+Name: FP-Growth_SD: 改进的——频繁模式增长算法
 Author: Jia_qiu Wang(王佳秋)
 Data: July, 2016
 function:
