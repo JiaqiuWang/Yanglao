@@ -6,3 +6,4 @@ class ItemPattern:
     def append(self, p):
         self.sequence.extend(p.squence)
         self.support = min(self.support, p.support)
+
